@@ -1,21 +1,16 @@
 package ch.idsia.agents.controllers;
 
-import java.awt.Graphics;
-
 import ch.idsia.agents.AgentOptions;
 import ch.idsia.agents.IAgent;
-import ch.idsia.agents.controllers.MarioHijackAIBase;
 import ch.idsia.benchmark.mario.MarioSimulator;
 import ch.idsia.benchmark.mario.engine.LevelScene;
 import ch.idsia.benchmark.mario.engine.VisualizationComponent;
 import ch.idsia.benchmark.mario.engine.generalization.Enemy;
-import ch.idsia.benchmark.mario.engine.generalization.Entity;
 import ch.idsia.benchmark.mario.engine.input.MarioInput;
-import ch.idsia.benchmark.mario.engine.input.MarioKey;
-import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.IEnvironment;
 import ch.idsia.benchmark.mario.options.FastOpts;
-import ch.idsia.tools.EvaluationInfo;
+
+import java.awt.*;
 
 /**
  * Agent that sprints forward, jumps and shoots.
@@ -24,7 +19,7 @@ import ch.idsia.tools.EvaluationInfo;
  * 
  * @author Jakub 'Jimmy' Gemrot, gemrot@gamedev.cuni.cz
  */
-public class Agent04_Shooter extends MarioHijackAIBase implements IAgent {
+public class Agent05_AStar extends MarioHijackAIBase implements IAgent {
 
 	@Override
 	public void reset(AgentOptions options) {
@@ -82,7 +77,7 @@ public class Agent04_Shooter extends MarioHijackAIBase implements IAgent {
 		
 		MarioSimulator simulator = new MarioSimulator(options);
 		
-		IAgent agent = new Agent04_Shooter();
+		IAgent agent = new Agent05_AStar();
 		
 		simulator.run(agent);
 		

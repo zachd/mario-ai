@@ -1,4 +1,4 @@
-package ch.idsia.agents.controllers.examples;
+package ch.idsia.agents.controllers;
 
 import java.awt.Graphics;
 
