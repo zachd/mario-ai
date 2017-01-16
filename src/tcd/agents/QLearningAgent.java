@@ -14,7 +14,18 @@ public class QLearningAgent implements LearningAgent {
     }
 
 
-    @Override
+    @Override/*
+    || Q Learning Algorithm ||
+    Initialise Q(s, a) arbitrarily
+    for each episode
+      initialise s
+      repeat ( for each step of episode)
+        choose a from s using pi derived from Q
+        perform a, observe r, s'
+        Q(s, a) ← Q(s, a) + α[r + γ maxa'Q'(s', a') - Q(s,a)]
+        s ← s
+      until s is terminal state
+    */
     public void init() {
 
     }
