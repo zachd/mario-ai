@@ -32,10 +32,17 @@ public class Action {
 
     public Action() {
         qScore = new float[action_list.length]; //initialise q_scores to 0
-        qScore[0] = 1;
-        qScore[4] = 2;
-        qScore[8] = 2;
     }
+
+    /**
+     * updates the qScore for an action
+     * @param newScore the new q score for the action
+     * @param actionIndex the index of the action
+     */
+    public void updateQScore(float newScore, int actionIndex){
+        qScore[actionIndex] = newScore;
+    }
+
 
     /**
      * gets the best action for this objects q score list. If there is more than one action with the same score then it
@@ -79,6 +86,4 @@ public class Action {
         }
         return marioAction;
     }
-
-    
 }
