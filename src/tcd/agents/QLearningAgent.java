@@ -7,14 +7,16 @@ import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
 
+import java.util.Hashtable;
+
 public class QLearningAgent implements LearningAgent {
 
     private String name;
+    private Hashtable<WorldState, int[]> q_table;
 
     public QLearningAgent() {
         setName("QLearning Agent");
     }
-
 
     public static void main(String[] args) {
         final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
@@ -39,7 +41,7 @@ public class QLearningAgent implements LearningAgent {
       until s is terminal state
     */
     public void init() {
-
+        q_table = new Hashtable<WorldState, int[]>();
     }
 
     @Override
