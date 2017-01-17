@@ -33,6 +33,7 @@ import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
+import tcd.agents.QLearningAgent;
 
 /**
  * Created by IntelliJ IDEA.
@@ -164,8 +165,9 @@ public static void main(String[] args)
 {
     // set up parameters
     MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-//    LearningAgent learningAgent = new MLPESLearningAgent(); // Learning track competition entry goes here
-    LearningAgent learningAgent = (LearningAgent) marioAIOptions.getAgent();
+    LearningAgent learningAgent = new QLearningAgent(); // Learning track competition entry goes here
+    marioAIOptions.setAgent(learningAgent);
+    //LearningAgent learningAgent = (LearningAgent) marioAIOptions.getAgent();
     System.out.println("main.learningAgent = " + learningAgent);
 
 //        Level 0

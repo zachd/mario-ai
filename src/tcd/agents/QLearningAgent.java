@@ -2,6 +2,7 @@ package tcd.agents;
 
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
@@ -46,23 +47,30 @@ public class QLearningAgent implements LearningAgent {
         // TODO: Tells our agent to initialise
         q_table = new Hashtable<WorldState, int[]>();
         state = new WorldState();
+        System.out.println("INIT STATE");
     }
-
     @Override
     public void learn() {
+        System.out.println("LEARNING STATE");
         // TODO: Tells our agent to start learning from 1000 trials
     }
 
     @Override
     public void integrateObservation(Environment environment) {
         state.update(environment);
+        System.out.println("State: " + state);
         // TODO: Do something with the current environment observation
     }
 
     @Override
     public boolean[] getAction() {
         // TODO: Return action back to environment
-        return null;
+
+        boolean[] action = new boolean[6];
+        action[Mario.KEY_RIGHT] = true;
+
+        System.out.println("Action: " + action);
+        return action;
     }
 
 
