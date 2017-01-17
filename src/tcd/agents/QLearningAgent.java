@@ -3,7 +3,9 @@ package tcd.agents;
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
 import ch.idsia.benchmark.mario.environments.Environment;
+import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
+import ch.idsia.tools.MarioAIOptions;
 
 public class QLearningAgent implements LearningAgent {
 
@@ -13,6 +15,16 @@ public class QLearningAgent implements LearningAgent {
         setName("QLearning Agent");
     }
 
+
+    public static void main(String[] args) {
+        final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+        Agent agent = new QLearningAgent();
+        marioAIOptions.setAgent(agent);
+
+        final BasicTask basicTask = new BasicTask(marioAIOptions);
+        marioAIOptions.setVisualization(true);
+        basicTask.doEpisodes(1, true, 1);
+    }
 
     @Override/*
     || Q Learning Algorithm ||
