@@ -39,8 +39,8 @@ public class QLearningAgent implements LearningAgent {
       repeat ( for each step of episode)
         choose a from s using pi derived from Q
         perform a, observe r, s'
-        Q(s, a) ← Q(s, a) + α[r + γ maxa'Q'(s', a') - Q(s,a)]
-        s ← s
+        Q(s, a) ← Q(s, a) + α[r(s, a) + γ max a Q(s', a) - Q(s,a)]
+        s ← s'
       until s is terminal state
     */
     public void init() {
@@ -65,6 +65,7 @@ public class QLearningAgent implements LearningAgent {
         if(!q_table.containsKey(state)) {
             q_table.put(state, q_scores);
         }
+
 
         System.out.println("Q Table: " + Arrays.asList(q_table));
     }
