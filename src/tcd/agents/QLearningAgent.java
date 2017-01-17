@@ -9,6 +9,7 @@ import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
 
 import java.util.Hashtable;
+import java.util.ArrayList;
 
 public class QLearningAgent implements LearningAgent {
 
@@ -16,6 +17,10 @@ public class QLearningAgent implements LearningAgent {
     private LearningTask learningTask;
     private WorldState state;
     private Hashtable<WorldState, int[]> q_table;
+    private ArrayList<Integer> rewards_table;
+
+    private float[] MARIO_POSITION;
+    private boolean ENEMIES = false;
 
     public QLearningAgent() {
         setName("QLearning Agent");
@@ -46,6 +51,7 @@ public class QLearningAgent implements LearningAgent {
     public void init() {
         // TODO: Tells our agent to initialise
         q_table = new Hashtable<WorldState, int[]>();
+        rewards_table = new ArrayList<Integer>();
         state = new WorldState();
         System.out.println("INIT STATE");
     }
@@ -58,7 +64,30 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void integrateObservation(Environment environment) {
         state.update(environment);
-        System.out.println("State: " + state);
+
+        MARIO_POSITION = environment.getEnemiesFloatPos();
+        //System.out.println("X: " + MARIO_POSITION[0]);
+        //System.out.println("Y: " + MARIO_POSITION[1]);
+        //System.out.println();
+
+        byte[][] enemies = environment.getEnemiesObservationZ(2);
+        byte[][] obstacles = environment.getLevelSceneObservationZ(2);
+        for (int i=0; i < enemies.length; i++) {
+            for (int j=0; j< enemies.length; j++) {
+                System.out.println("ENEMY: " + enemies[i][j]);
+                ENEMIES = enemies[i][j] == 1 ? true : false;
+            }
+        }
+
+        for (int i=0; i < obstacles.length; i++) {
+            for (int j=0; j< obstacles.length; j++) {
+                if (obstacles[i][j] != 0) {
+                    //System.out.println("OBSTACLES: " + obstacles[i][j]);
+                }
+            }
+        }
+
+        //System.out.println("State: " + state);
         // TODO: Do something with the current environment observation
     }
 
@@ -67,9 +96,13 @@ public class QLearningAgent implements LearningAgent {
         // TODO: Return action back to environment
 
         boolean[] action = new boolean[6];
-        action[Mario.KEY_RIGHT] = true;
-
-        System.out.println("Action: " + action);
+        if (ENEMIES == true) {
+            action[Mario.KEY_JUMP] = true;
+            ENEMIES = false;
+        } else {
+            action[Mario.KEY_RIGHT] = true;
+        }
+        //System.out.println("Action: " + action);
         return action;
     }
 
