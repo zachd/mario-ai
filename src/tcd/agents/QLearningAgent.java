@@ -8,14 +8,14 @@ import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
 
-import java.util.Hashtable;
+import java.util.Arrays;
+import java.util.HashMap;
 
 public class QLearningAgent implements LearningAgent {
 
     private String name;
     private LearningTask learningTask;
-    private WorldState state;
-    private Hashtable<WorldState, int[]> q_table;
+    private HashMap<WorldState, int[]> q_table;
 
     public QLearningAgent() {
         setName("QLearning Agent");
@@ -45,21 +45,28 @@ public class QLearningAgent implements LearningAgent {
     */
     public void init() {
         // TODO: Tells our agent to initialise
-        q_table = new Hashtable<WorldState, int[]>();
-        state = new WorldState();
+        q_table = new HashMap<WorldState, int[]>();
         System.out.println("INIT STATE");
     }
     @Override
     public void learn() {
-        System.out.println("LEARNING STATE");
         // TODO: Tells our agent to start learning from 1000 trials
+        System.out.println("LEARNING STATE");
     }
 
     @Override
     public void integrateObservation(Environment environment) {
-        state.update(environment);
-        System.out.println("State: " + state);
         // TODO: Do something with the current environment observation
+
+        WorldState state = new WorldState(environment);
+        int[] q_scores = {0, 0, 0, 0, 0, 0};
+
+        // Add to Q Table
+        if(!q_table.containsKey(state)) {
+            q_table.put(state, q_scores);
+        }
+
+        System.out.println("Q Table: " + Arrays.asList(q_table));
     }
 
     @Override
