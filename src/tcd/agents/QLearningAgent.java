@@ -19,11 +19,8 @@ public class QLearningAgent implements LearningAgent {
     private LearningTask learningTask;
     private WorldState state;
     private Hashtable<WorldState, int[]> q_table;
-    private ArrayList<Integer> rewards_table;
-
-    private float[] MARIO_POSITION;
-    private float[] ENEMY_POSITION;
-    private boolean ENEMIES = false;
+    private Rewards marioRewards;
+    private boolean initialRun = true;
 
     public QLearningAgent() {
         setName("QLearning Agent");
@@ -54,7 +51,7 @@ public class QLearningAgent implements LearningAgent {
     public void init() {
         // TODO: Tells our agent to initialise
         q_table = new Hashtable<WorldState, int[]>();
-        rewards_table = new ArrayList<Integer>();
+        marioRewards = new Rewards();
         //state = new WorldState();
         System.out.println("INIT STATE");
     }
@@ -67,35 +64,24 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void integrateObservation(Environment environment) {
         //state.update(environment);
-        /*
-        MARIO_POSITION = environment.getMarioFloatPos();
-        ENEMY_POSITION = environment.getEnemiesFloatPos();
-
-        if (MARIO_POSITION[0] + 10 > ENEMY_POSITION[0]) {
-            ENEMIES = true;
-        } else if (MARIO_POSITION[0] < ENEMY_POSITION[0]) {
-            ENEMIES = false;
+        if (initialRun) {
+            marioRewards.setPos(environment.getMarioFloatPos());
+            initialRun = false;
         }
-        //System.out.println("X: " + MARIO_POSITION[0]);
-        //System.out.println("Y: " + MARIO_POSITION[1]);
-        //System.out.println();
 
-        byte[][] enemies = environment.getEnemiesObservationZ(2);
-        byte[][] obstacles = environment.getLevelSceneObservationZ(2);
+        marioRewards.checkDirection(environment.getMarioFloatPos());
 
-        //System.out.println("State: " + state);
         // TODO: Do something with the current environment observation
-        */
 
         WorldState state = new WorldState(environment);
         int[] q_scores = {0, 0, 0, 0, 0, 0};
 
         // Add to Q Table
-        if(!q_table.containsKey(state)) {
+        if (!q_table.containsKey(state)) {
             q_table.put(state, q_scores);
         }
-
-        System.out.println("Q Table: " + Arrays.asList(q_table));
+        System.out.println(marioRewards.getReward());
+        //System.out.println("Q Table: " + Arrays.asList(q_table));
     }
 
     @Override
@@ -103,12 +89,7 @@ public class QLearningAgent implements LearningAgent {
         // TODO: Return action back to environment
 
         boolean[] action = new boolean[6];
-        if (ENEMIES == true) {
-            action[Mario.KEY_JUMP] = true;
-            action[Mario.KEY_RIGHT] = true;
-        } else {
-            action[Mario.KEY_RIGHT] = true;
-        }
+        action[Mario.KEY_LEFT] = true;
         //System.out.println("Action: " + action);
         return action;
     }
