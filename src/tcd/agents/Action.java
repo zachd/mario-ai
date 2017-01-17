@@ -69,16 +69,15 @@ public class Action {
 
     /**
      * Cast our own action definitions above to an action boolean array that the mario engine can use
-     * @param action an int array that is the action we want to cast to a mario action
+     * @param actions an int array that is the action we want to cast to a mario action
      * @return a boolean array representing the mario action
      */
-    public boolean[] qActionToMarioAction(int[] action){
+    public boolean[] qActionToMarioAction(int[] actions){
         boolean[] marioAction = new boolean[6];
-        for(int i=0; i< action.length; i++){
-            marioAction[action[i]] = true;
+        for(int action : actions){
+            marioAction[action] = true;
         }
         return marioAction;
-
     }
 
     

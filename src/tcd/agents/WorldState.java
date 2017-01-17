@@ -23,17 +23,26 @@ public class WorldState {
         mode = environment.getMarioMode();
     }
 
+    /**
+     * Checks whether an input WorldState is equal to the current WorldState object,
+     * @param input WorldState to check comparison
+     * @return boolean whether all attributes are equal
+     */
     @Override
-    public boolean equals(Object comparison) {
+    public boolean equals(Object input) {
         for(Field field : WorldState.class.getDeclaredFields()) {
             try {
-                if (!field.get(this).equals(field.get(comparison)))
+                if (!field.get(this).equals(field.get(input)))
                     return false;
             } catch (IllegalAccessException e) {}
         }
         return true;
     }
 
+    /**
+     * Gets the hashCode for all fields in the WorldState object
+     * @return hash
+     */
     @Override
     public int hashCode(){
         ArrayList<Object> fields = new ArrayList<Object>();
