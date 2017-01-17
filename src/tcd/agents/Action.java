@@ -35,21 +35,29 @@ public class Action {
     }
 
     /**
-     * updates the qScore for an action
-     * @param newScore the new q score for the action
+     * Sets the qScore for an action
      * @param actionIndex the index of the action
+     * @param newScore the new q score for the action
      */
-    public void updateQScore(float newScore, int actionIndex){
+    public void setQScore(int actionIndex, float newScore) {
         qScore[actionIndex] = newScore;
     }
 
+    /**
+     * Gets the qScore of an action
+     * @param actionIndex the index of the action
+     * @return qScore
+     */
+    public float getQScore(int actionIndex) {
+        return qScore[actionIndex];
+    }
 
     /**
-     * gets the best action for this objects q score list. If there is more than one action with the same score then it
+     * Gets the best action for this objects q score list. If there is more than one action with the same score then it
      * chooses one of these at random
      * @return a boolean representation of the best action
      */
-    public boolean[] getBestAction() {
+    public int getBestAction() {
         ArrayList<int[]> bestActionList = new ArrayList();//an array list that stores the indexes of the actions with the highest qscore
         float bestScore = 0;
 
@@ -68,20 +76,17 @@ public class Action {
         //choose one of the bestActionList at random
         rand = new Random();
         int randomIndex = rand.nextInt(bestActionList.size());
-        int[] chosenAction = bestActionList.get(randomIndex);
-        boolean[] bestAction = qActionToMarioAction(chosenAction);
-
-        return bestAction;
+        return randomIndex;
     }
 
     /**
      * Cast our own action definitions above to an action boolean array that the mario engine can use
-     * @param actions an int array that is the action we want to cast to a mario action
+     * @param actionIndex the index of the action we want to cast to a Mario action
      * @return a boolean array representing the mario action
      */
-    public boolean[] qActionToMarioAction(int[] actions){
+    public boolean[] toMarioAction(int actionIndex){
         boolean[] marioAction = new boolean[6];
-        for(int action : actions){
+        for(int action : action_list[actionIndex]){
             marioAction[action] = true;
         }
         return marioAction;

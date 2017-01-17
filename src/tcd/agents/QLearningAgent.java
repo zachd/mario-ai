@@ -15,11 +15,14 @@ public class QLearningAgent implements LearningAgent {
 
     private String name;
     private LearningTask learningTask;
-    private HashMap<WorldState, int[]> q_table;
+    private QTable q_table;
 
     public QLearningAgent() {
         setName("QLearning Agent");
     }
+
+    public static final float ALPHA = 0.1f;
+    public static final float GAMMA = 0.5f;
 
     public static void main(String[] args) {
         final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
@@ -45,7 +48,7 @@ public class QLearningAgent implements LearningAgent {
     */
     public void init() {
         // TODO: Tells our agent to initialise
-        q_table = new HashMap<WorldState, int[]>();
+        q_table = new QTable();
         System.out.println("INIT STATE");
     }
     @Override
@@ -56,29 +59,18 @@ public class QLearningAgent implements LearningAgent {
 
     @Override
     public void integrateObservation(Environment environment) {
-        // TODO: Do something with the current environment observation
-
         WorldState state = new WorldState(environment);
-        int[] q_scores = {0, 0, 0, 0, 0, 0};
 
-        // Add to Q Table
-        if(!q_table.containsKey(state)) {
-            q_table.put(state, q_scores);
-        }
+        // Update the Q table with the current state
+        q_table.update(state);
 
-
-        System.out.println("Q Table: " + Arrays.asList(q_table));
     }
 
     @Override
     public boolean[] getAction() {
-        // TODO: Return action back to environment
-
-        boolean[] action = new boolean[6];
-        action[Mario.KEY_RIGHT] = true;
-
-        System.out.println("Action: " + action);
-        return action;
+        Action new_action = q_table.getNewAction();
+        boolean[] mario_action = new_action.toMarioAction(q_table.getNewActionIndex());
+        return mario_action;
     }
 
 
