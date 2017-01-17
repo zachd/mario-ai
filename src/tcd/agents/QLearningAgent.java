@@ -13,6 +13,7 @@ public class QLearningAgent implements LearningAgent {
 
     private String name;
     private LearningTask learningTask;
+    private WorldState state;
     private Hashtable<WorldState, int[]> q_table;
 
     public QLearningAgent() {
@@ -44,6 +45,7 @@ public class QLearningAgent implements LearningAgent {
     public void init() {
         // TODO: Tells our agent to initialise
         q_table = new Hashtable<WorldState, int[]>();
+        state = new WorldState();
     }
 
     @Override
@@ -52,15 +54,17 @@ public class QLearningAgent implements LearningAgent {
     }
 
     @Override
+    public void integrateObservation(Environment environment) {
+        state.update(environment);
+        // TODO: Do something with the current environment observation
+    }
+
+    @Override
     public boolean[] getAction() {
         // TODO: Return action back to environment
         return null;
     }
 
-    @Override
-    public void integrateObservation(Environment environment) {
-        // TODO: Do something with the current environment observation
-    }
 
     @Override
     public Agent getBestAgent() {
