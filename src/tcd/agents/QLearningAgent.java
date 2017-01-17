@@ -12,6 +12,7 @@ import java.util.Hashtable;
 public class QLearningAgent implements LearningAgent {
 
     private String name;
+    private LearningTask learningTask;
     private Hashtable<WorldState, int[]> q_table;
 
     public QLearningAgent() {
@@ -41,48 +42,39 @@ public class QLearningAgent implements LearningAgent {
       until s is terminal state
     */
     public void init() {
+        // TODO: Tells our agent to initialise
         q_table = new Hashtable<WorldState, int[]>();
     }
 
     @Override
     public void learn() {
-
+        // TODO: Tells our agent to start learning from 1000 trials
     }
 
     @Override
     public boolean[] getAction() {
+        // TODO: Return action back to environment
         return null;
     }
 
-
     @Override
-    public void giveIntermediateReward(float intermediateReward) {
-
+    public void integrateObservation(Environment environment) {
+        // TODO: Do something with the current environment observation
     }
 
     @Override
-    public void newEpisode() {
+    public Agent getBestAgent() {
+        return this;
+    }
 
+    @Override
+    public void setLearningTask(LearningTask learningTask) {
+        this.learningTask = learningTask;
     }
 
     @Override
     public void setObservationDetails(int rfWidth, int rfHeight, int egoRow, int egoCol) {
 
-    }
-
-    @Override
-    public void setLearningTask(LearningTask learningTask) {
-
-    }
-
-    @Override
-    public void integrateObservation(Environment environment) {
-
-    }
-
-    @Override
-    public Agent getBestAgent() {
-        return null;
     }
 
     @Override
@@ -101,6 +93,16 @@ public class QLearningAgent implements LearningAgent {
     }
 
     @Override
+    public void giveIntermediateReward(float intermediateReward) {
+
+    }
+
+    @Override
+    public void newEpisode() {
+
+    }
+
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -109,5 +111,4 @@ public class QLearningAgent implements LearningAgent {
     public String getName() {
         return name;
     }
-
 }
