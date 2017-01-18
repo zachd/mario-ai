@@ -9,6 +9,7 @@ public class Reward {
     private final float BACKWARD = 0;
     private final float FINISH = 500;
     private final float JUMP = 1;
+    private final float STUCK = -10;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -17,6 +18,9 @@ public class Reward {
     private int stuck_tick;
     private int last_distance_travelled;
 
+    /**
+     * Constructor for Reward class
+     */
     public Reward() {
         reward_value = 0.0f;
         prev_pos = -1;
@@ -24,6 +28,10 @@ public class Reward {
         last_distance_travelled = 0;
     }
 
+    /**
+     * Reward function, given environment, will calculate the reward attainable for this state
+     * @param environment
+     */
     public void calculate(Environment environment) {
         resetReward();
 
@@ -39,7 +47,7 @@ public class Reward {
     }
 
     /**
-     *
+     * Checks introduced to check if Mario is stuck
      * @param environment
      */
     public void stuckReward(Environment environment){
@@ -53,11 +61,15 @@ public class Reward {
         }
 
         if(stuck_tick > STUCK_THRESHOLD){
-            updateReward(-10);
+            updateReward(STUCK);
         }
         last_distance_travelled = distance_travelled;
     }
 
+    /**
+     * Factoring in rewards for Mario heading towards the goal (heading right)
+     * @param position
+     */
     public void directionalReward(float[] position) {
         if(prev_pos > 0) {
             if (position[1] > prev_pos) {
@@ -69,19 +81,25 @@ public class Reward {
         prev_pos = position[1];
     }
 
-    public void jumpReward(float[] position) {
-
-    }
-
-
+    /**
+     * Reset the reward value at every episode
+     */
     public void resetReward() {
         reward_value = 0.0f;
     }
 
+    /**
+     * Updates the reward variable at any one episode
+     * @param reward
+     */
     public void updateReward(float reward) {
         reward_value += reward;
     }
 
+    /**
+     * Returns the rewards value
+     * @return reward_value
+     */
     public float getRewardValue() {
         return reward_value;
     }
