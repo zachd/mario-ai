@@ -12,7 +12,7 @@ import java.util.Arrays;
 public class QLearningAgent implements LearningAgent {
 
     private String name;
-    private LearningTask learningTask;
+    private static LearningTask learningTask;
     private WorldState state;
     private Reward reward;
     private QTable q_table;
@@ -23,6 +23,7 @@ public class QLearningAgent implements LearningAgent {
 
     public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
+    public static final int NUMBER_OF_LEARNS = 10000;
 
     private static boolean game_started = false;
 
@@ -37,8 +38,9 @@ public class QLearningAgent implements LearningAgent {
         marioAIOptions.setAgent(agent);
 
         // Learning task
-        LearningTask learningTask = new LearningTask(marioAIOptions);
+        learningTask = new LearningTask(marioAIOptions);
         agent.init();
+        marioAIOptions.setVisualization(false);
         agent.learn();
 
         // Gameplay task
@@ -63,7 +65,13 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void learn() {
-        System.out.println("LEARNING STATE");
+        int learnCount = 0;
+        System.out.println("learn session = "+learnCount);
+        for(int i=0; i<NUMBER_OF_LEARNS;i++){
+           learningTask.runSingleEpisode(1);
+           //System.out.println("learn session = "+learnCount);
+            learnCount++;
+       }
     }
 
     /**
