@@ -14,6 +14,8 @@ public class WorldState {
     public boolean on_ground;
     public boolean able_to_jump;
     public boolean able_to_shoot;
+    public int enemies_infront;
+    public int enemies_behind;
     public int mode;
 
     public WorldState(Environment environment) {
@@ -21,8 +23,26 @@ public class WorldState {
         able_to_jump = environment.isMarioAbleToJump();
         able_to_shoot = environment.isMarioAbleToShoot();
         mode = environment.getMarioMode();
+        updateEnemyPosition(environment);
     }
 
+    /**
+     * updates enemies_infromt and enemies_behind with the number of enemies on the screen
+     * @param environment the current environment
+     */
+    public void updateEnemyPosition(Environment environment){
+        enemies_infront = 0;
+        enemies_behind = 0;
+        float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
+        for(int i=0;i<enemies.length; i+=3){
+            if(enemies[i+1] > 0){
+                enemies_infront++;
+            }
+            else if(enemies[i+1] < 0) {
+                enemies_behind++;
+            }
+        }
+    }
     /**
      * Checks whether an input WorldState is equal to the current WorldState object,
      * @param input WorldState to check comparison
