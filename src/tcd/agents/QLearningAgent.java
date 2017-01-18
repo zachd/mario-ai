@@ -24,6 +24,7 @@ public class QLearningAgent implements LearningAgent {
     public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
 
+    private static boolean game_started = false;
 
     /**
      * Main task to test the Q-Learning Agent
@@ -71,15 +72,17 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void integrateObservation(Environment environment) {
+        if (game_started) {
+            // Get the worldstate representation of the environment
+            WorldState state = new WorldState(environment);
+            // Update the state reward with the environment
+            reward.calculate(environment);
+            // Update the Q table with the current state
+            q_table.update(state, reward);
+        } else if (environment.isMarioOnGround()) {
+            game_started = true;
+        }
 
-        // Get the worldstate representation of the environment
-        WorldState state = new WorldState(environment);
-
-        // Update the state reward with the environment
-        reward.calculate(environment);
-
-        // Update the Q table with the current state
-        q_table.update(state, reward);
     }
 
     /**
@@ -89,11 +92,18 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public boolean[] getAction() {
         // TODO: Return action back to environment
-        Action new_action = q_table.getNewAction();
-        System.out.println("Chosen action: " + q_table.getNewActionIndex());
-        System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
-        boolean[] mario_action = new_action.toMarioAction(q_table.getNewActionIndex());
-        return mario_action;
+        Action new_action;
+        int action_index = 0;
+        try {
+            new_action = q_table.getNewAction();
+            System.out.println("Chosen action: " + q_table.getNewActionIndex());
+            System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
+            action_index = q_table.getNewActionIndex();
+            return new_action.toMarioAction(action_index);
+        } catch (NullPointerException e) {
+            Action nothing_action = new Action();
+            return nothing_action.toMarioAction(action_index);
+        }
     }
 
 

@@ -10,6 +10,7 @@ import java.util.Random;
  */
 public class Action {
 
+    private int[] NOTHING = {};
     private int[] RIGHT = {Mario.KEY_RIGHT};
     private int[] RIGHT_SPEED = {Mario.KEY_RIGHT, Mario.KEY_SPEED};
     private int[] RIGHT_JUMP = {Mario.KEY_RIGHT, Mario.KEY_JUMP};
@@ -23,9 +24,10 @@ public class Action {
     private int[] JUMP = {Mario.KEY_JUMP};
     private int[] JUMP_SPEED = {Mario.KEY_JUMP, Mario.KEY_SPEED};
 
-    private int[][] action_list = {RIGHT, RIGHT_SPEED, RIGHT_JUMP, RIGHT_JUMP_SPEED,
-                                    LEFT, LEFT_SPEED, LEFT_JUMP, LEFT_JUMP_SPEED,
-                                        JUMP, JUMP_SPEED};
+    private int[][] action_list = {NOTHING,
+            RIGHT, RIGHT_SPEED, RIGHT_JUMP, RIGHT_JUMP_SPEED,
+            LEFT, LEFT_SPEED, LEFT_JUMP, LEFT_JUMP_SPEED,
+            JUMP, JUMP_SPEED};
 
     public float[] qScore; //holds the qscores for each action
     Random rand;
