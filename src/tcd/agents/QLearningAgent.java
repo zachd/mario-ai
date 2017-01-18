@@ -79,6 +79,7 @@ public class QLearningAgent implements LearningAgent {
             reward.calculate(environment);
             // Update the Q table with the current state
             q_table.update(state, reward);
+            System.out.println("\u23BE State: " + state);
         } else if (environment.isMarioOnGround()) {
             game_started = true;
         }
@@ -94,10 +95,10 @@ public class QLearningAgent implements LearningAgent {
         int action_index = 0;
         try {
             new_action = q_table.getNewAction();
-            System.out.println("Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
+            System.out.println("\u23B9 Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
                     + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
-            System.out.println("Reward: " + reward.getReward());
-            System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
+            System.out.println("\u23B9 Reward: " + reward.getReward());
+            System.out.println("\u23BF  Q Scores: " + Arrays.toString(new_action.qScore));
             action_index = q_table.getNewActionIndex();
             return new_action.toMarioAction(action_index);
         } catch (NullPointerException e) {

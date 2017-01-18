@@ -5,8 +5,8 @@ import ch.idsia.tools.EvaluationInfo;
 
 public class Reward {
     private final float HIT_BY_ENEMY = -100;
-    private final float FORWARD = 1;
-    private final float BACKWARD = -0.5f;
+    private final float FORWARD = 10;
+    private final float BACKWARD = -1;
     private final float FINISH = 100;
     private final float JUMP = 1;
     private final float STUCK = -10;
