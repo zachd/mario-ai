@@ -9,6 +9,7 @@ public class Reward {
     private final float BACKWARD = -0.5f;
     private final float FINISH = 100;
     private final float JUMP = 1;
+    private final float STUCK = -10;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -17,6 +18,9 @@ public class Reward {
     private int stuck_tick;
     private int last_distance_travelled;
 
+    /**
+     * Constructor for Reward class
+     */
     public Reward() {
         current_reward = 0;
         prev_pos = -1;
@@ -24,6 +28,10 @@ public class Reward {
         last_distance_travelled = 0;
     }
 
+    /**
+     * Reward function, given environment, will calculate the reward attainable for this state
+     * @param environment
+     */
     public void calculate(Environment environment) {
         current_reward = 0;
 
@@ -40,7 +48,7 @@ public class Reward {
     }
 
     /**
-     *
+     * Checks introduced to check if Mario is stuck
      * @param environment
      */
     public void stuckReward(Environment environment){
@@ -54,11 +62,15 @@ public class Reward {
         }
 
         if(stuck_tick > STUCK_THRESHOLD){
-            updateReward(-1);
+            updateReward(STUCK);
         }
         last_distance_travelled = distance_travelled;
     }
 
+    /**
+     * Factoring in rewards for Mario heading towards the goal (heading right)
+     * @param position
+     */
     public void directionalReward(float[] position) {
         if(prev_pos > 0) {
             if (position[1] > prev_pos) {
@@ -74,10 +86,18 @@ public class Reward {
 
     }
 
+    /**
+     * Updates the reward variable at any one episode
+     * @param reward
+     */
     public void updateReward(float reward) {
         current_reward += reward;
     }
 
+    /**
+     * Returns the rewards value
+     * @return reward_value
+     */
     public float getReward() {
         return current_reward;
     }
