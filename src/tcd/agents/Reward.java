@@ -9,7 +9,7 @@ public class Reward {
     private final float BACKWARD = -0.5f;
     private final float FINISH = 100;
     private final float JUMP = 1;
-    private final float STUCK = -10;
+    private final float STUCK = -0.5f;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -54,15 +54,16 @@ public class Reward {
     public void stuckReward(Environment environment){
         EvaluationInfo evalInfo = environment.getEvaluationInfo();
         int distance_travelled = evalInfo.distancePassedPhys;
-        if(distance_travelled == last_distance_travelled){
-            stuck_tick ++;
+        if ((last_distance_travelled < (distance_travelled + 2)) && (last_distance_travelled > (distance_travelled - 2))) {
+            stuck_tick++;
         }
-        else{
+        else {
             stuck_tick = 0;
         }
 
         if(stuck_tick > STUCK_THRESHOLD){
             updateReward(STUCK);
+            //System.out.println("STUCK");
         }
         last_distance_travelled = distance_travelled;
     }
@@ -80,10 +81,6 @@ public class Reward {
             }
         }
         prev_pos = position[1];
-    }
-
-    public void jumpReward(float[] position) {
-
     }
 
     /**

@@ -23,7 +23,7 @@ public class QLearningAgent implements LearningAgent {
 
     public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
-    public static final int NUMBER_OF_LEARNS = 10000;
+    public static final int NUMBER_OF_LEARNS = 1000;
 
     private static boolean game_started = false;
 
@@ -102,14 +102,14 @@ public class QLearningAgent implements LearningAgent {
         int action_index = 0;
         try {
             new_action = q_table.getNewAction();
-            System.out.println("Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
-                    + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
-            System.out.println("Reward: " + reward.getReward());
-            System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
+            //System.out.println("Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
+            //        + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
+            //System.out.println("Reward: " + reward.getReward());
+            //System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
             action_index = q_table.getNewActionIndex();
             return new_action.toMarioAction(action_index);
         } catch (NullPointerException e) {
-            System.out.println("Doing nothing");
+            //System.out.println("Doing nothing");
             return (new Action()).toMarioAction(action_index);
         }
     }
