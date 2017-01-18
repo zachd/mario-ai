@@ -7,12 +7,12 @@ public class QTable {
 
     private HashMap<WorldState, Action> table;
 
-    private int oldActionIndex = -1;
-    private WorldState oldState;
-    private float oldReward;
+    private int prevActionIndex = -1;
+    private WorldState prevState;
+    private float prevReward;
 
-    private int newActionIndex;
-    private Action newAction;
+    private int actionIndex;
+    private Action action;
 
     public QTable() {
         table = new HashMap<WorldState, Action>();
@@ -20,31 +20,32 @@ public class QTable {
 
     /**
      *  Updates the QTable with the Q score for the previous action.
-     * @param newState The current WorldState
+     * @param state The current WorldState
+     * @param reward The current Reward
      */
-    public void update(WorldState newState, Reward newReward){
+    public void update(WorldState state, Reward reward){
 
         // Add new state to QTable if it doesn't exist
-        if(!table.containsKey(newState)){
-            table.put(newState, new Action());
+        if(!table.containsKey(state)){
+            table.put(state, new Action());
         }
 
         // Get the best action for the new state
-        newAction = table.get(newState);
-        newActionIndex = newAction.getBestAction();
+        action = table.get(state);
+        actionIndex = action.getBestAction();
 
         // Set Q Score for the old action
-        if(oldActionIndex != -1) {
-            Action oldAction = table.get(oldState);
-            float oldActionScore = oldAction.getQScore(oldActionIndex) + QLearningAgent.ALPHA *
-                    (oldReward + (QLearningAgent.GAMMA * newAction.getQScore(newActionIndex)) - oldAction.getQScore(oldActionIndex));
-            oldAction.setQScore(oldActionIndex, oldActionScore);
+        if(prevActionIndex != -1) {
+            Action oldAction = table.get(prevState);
+            float oldActionScore = oldAction.getQScore(prevActionIndex) + QLearningAgent.ALPHA *
+                    (prevReward + (QLearningAgent.GAMMA * action.getQScore(actionIndex)) - oldAction.getQScore(prevActionIndex));
+            oldAction.setQScore(prevActionIndex, oldActionScore);
         }
 
         // Save state of current state and action for next iteration
-        oldState = newState;
-        oldActionIndex = newActionIndex;
-        oldReward = newReward.getRewardValue();
+        prevState = state;
+        prevActionIndex = actionIndex;
+        prevReward = reward.getReward();
     }
 
     /**
@@ -52,7 +53,7 @@ public class QTable {
      * @return action
      */
     public Action getNewAction(){
-        return newAction;
+        return action;
     }
 
     /**
@@ -60,6 +61,6 @@ public class QTable {
      * @return index of best action
      */
     public int getNewActionIndex(){
-        return newActionIndex;
+        return actionIndex;
     }
 }

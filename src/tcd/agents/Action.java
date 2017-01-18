@@ -29,6 +29,11 @@ public class Action {
             LEFT, LEFT_SPEED, LEFT_JUMP, LEFT_JUMP_SPEED,
             JUMP, JUMP_SPEED};
 
+    public static String[] action_terms = {"NOTHING",
+            "RIGHT", "RIGHT_SPEED", "RIGHT_JUMP", "RIGHT_JUMP_SPEED",
+            "LEFT", "LEFT_SPEED", "LEFT_JUMP", "LEFT_JUMP_SPEED",
+            "JUMP", "JUMP_SPEED"};
+
     public float[] qScore; //holds the qscores for each action
     Random rand;
 
@@ -60,7 +65,7 @@ public class Action {
      * @return a boolean representation of the best action
      */
     public int getBestAction() {
-        ArrayList<int[]> bestActionList = new ArrayList();//an array list that stores the indexes of the actions with the highest qscore
+        ArrayList<Integer> bestActionList = new ArrayList();//an array list that stores the indexes of the actions with the highest qscore
         float bestScore = Integer.MIN_VALUE;
 
         //get the best qScore in the list of qScores
@@ -72,13 +77,13 @@ public class Action {
         //get all the actions with the best score (could be multiple)
         for(int i = 0; i< qScore.length; i++) {
             if (qScore[i] == bestScore) {
-                bestActionList.add(action_list[i]); //add the corresponding action from action_list
+                bestActionList.add(i); //add the corresponding action from action_list
             }
         }
         //choose one of the bestActionList at random
         rand = new Random();
-        int randomIndex = rand.nextInt(bestActionList.size());
-        return randomIndex;
+        int index = rand.nextInt(bestActionList.size());
+        return bestActionList.get(index);
     }
 
     /**
