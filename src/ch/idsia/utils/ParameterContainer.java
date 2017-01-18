@@ -82,7 +82,7 @@ private static final String[] allowed = new String[]{
         "-miy", // TODO description
         "-mer", // Mario Ego Row
         "-mec", // Mario Ego Column
-        "-fps", // Frames Per Second - update frequency
+        "-fps", // Frames Per Second - calculate frequency
         "-pr",  // Power resoration (cheat) (bring Mario to FIRE state if "Shoot/RUN" key activated.
         "-punj",// Enable bytecode counting
         "-rfh", // receptive field height (observation )

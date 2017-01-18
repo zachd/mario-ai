@@ -27,7 +27,7 @@ public class Action {
                                     LEFT, LEFT_SPEED, LEFT_JUMP, LEFT_JUMP_SPEED,
                                         JUMP, JUMP_SPEED};
 
-    private float[] qScore; //holds the qscores for each action
+    public float[] qScore; //holds the qscores for each action
     Random rand;
 
     public Action() {

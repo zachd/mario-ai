@@ -664,7 +664,7 @@ public void appendBonusPoints(final int superPunti)
 
 }
 
-//    public void update(boolean[] action)
+//    public void calculate(boolean[] action)
 //    {
 //        System.arraycopy(action, 0, mario.keys, 0, 6);
 //    }

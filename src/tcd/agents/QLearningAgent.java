@@ -7,6 +7,8 @@ import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
 
+import java.util.Arrays;
+
 public class QLearningAgent implements LearningAgent {
 
     private String name;
@@ -19,8 +21,9 @@ public class QLearningAgent implements LearningAgent {
         setName("QLearning Agent");
     }
 
-    public static final float ALPHA = 0.1f;
+    public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
+
 
     /**
      * Main task to test the Q-Learning Agent
@@ -73,7 +76,7 @@ public class QLearningAgent implements LearningAgent {
         WorldState state = new WorldState(environment);
 
         // Update the state reward with the environment
-        reward.update(environment);
+        reward.calculate(environment);
 
         // Update the Q table with the current state
         q_table.update(state, reward);
@@ -87,6 +90,8 @@ public class QLearningAgent implements LearningAgent {
     public boolean[] getAction() {
         // TODO: Return action back to environment
         Action new_action = q_table.getNewAction();
+        System.out.println("Chosen action: " + q_table.getNewActionIndex());
+        System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
         boolean[] mario_action = new_action.toMarioAction(q_table.getNewActionIndex());
         return mario_action;
     }
