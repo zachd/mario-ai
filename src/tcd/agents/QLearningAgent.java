@@ -94,7 +94,8 @@ public class QLearningAgent implements LearningAgent {
         int action_index = 0;
         try {
             new_action = q_table.getNewAction();
-            System.out.println("Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]);
+            System.out.println("Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
+                    + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
             System.out.println("Reward: " + reward.getReward());
             System.out.println("Q Scores:" + Arrays.toString(new_action.qScore));
             action_index = q_table.getNewActionIndex();
