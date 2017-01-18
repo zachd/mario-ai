@@ -29,40 +29,50 @@ public class QLearningAgent implements LearningAgent {
     public static final float ALPHA = 0.1f;
     public static final float GAMMA = 0.5f;
 
+    /**
+     * Main task to test the Q-Learning Agent
+     * @param args
+     */
     public static void main(String[] args) {
-        final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-        Agent agent = new QLearningAgent();
+        // Set up options
+        MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+        LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
 
-        final BasicTask basicTask = new BasicTask(marioAIOptions);
+        // Learning task
+        LearningTask learningTask = new LearningTask(marioAIOptions);
+        agent.init();
+        agent.learn();
+
+        // Gameplay task
         marioAIOptions.setVisualization(true);
-        basicTask.doEpisodes(1, true, 1);
+        BasicTask basicTask = new BasicTask(marioAIOptions);
+        basicTask.setOptionsAndReset(marioAIOptions);
+        basicTask.runSingleEpisode(1);
     }
 
-    @Override/*
-    || Q Learning Algorithm ||
-    Initialise Q(s, a) arbitrarily
-    for each episode
-      initialise s
-      repeat ( for each step of episode)
-        choose a from s using pi derived from Q
-        perform a, observe r, s'
-        Q(s, a) ← Q(s, a) + α[r(s, a) + γ max a Q(s', a) - Q(s,a)]
-        s ← s'
-      until s is terminal state
-    */
+    /**
+     * Run by the Learning Track to initialise our agent
+     */
+    @Override
     public void init() {
-        // TODO: Tells our agent to initialise
+        System.out.println("INIT STATE");
         marioRewards = new Rewards();
         q_table = new QTable();
-        System.out.println("INIT STATE");
     }
+
+    /**
+     * Run by the Learning Track so the agent can learn from 10000 trials
+     */
     @Override
     public void learn() {
-        // TODO: Tells our agent to start learning from 1000 trials
         System.out.println("LEARNING STATE");
     }
 
+    /**
+     * Called every tick while a game is running
+     * @param environment Current game environment
+     */
     @Override
     public void integrateObservation(Environment environment) {
         //state.update(environment);
@@ -82,6 +92,10 @@ public class QLearningAgent implements LearningAgent {
         q_table.update(state);
     }
 
+    /**
+     * The action Mario performs in the game after each observation
+     * @return A boolean array of keys to press
+     */
     @Override
     public boolean[] getAction() {
         // TODO: Return action back to environment
