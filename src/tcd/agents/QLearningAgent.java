@@ -19,7 +19,6 @@ public class QLearningAgent implements LearningAgent {
     private LearningTask learningTask;
     private WorldState state;
     private Rewards marioRewards;
-    private boolean initialRun = true;
     private QTable q_table;
 
     public QLearningAgent() {
@@ -58,7 +57,7 @@ public class QLearningAgent implements LearningAgent {
     public void init() {
         System.out.println("INIT STATE");
         marioRewards = new Rewards();
-        q_table = new QTable();
+        q_table = new QTable(marioRewards);
     }
 
     /**
@@ -75,19 +74,12 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void integrateObservation(Environment environment) {
-        //state.update(environment);
-        if (initialRun) {
-            marioRewards.setPos(environment.getMarioFloatPos());
-            initialRun = false;
-        }
-
-        marioRewards.checkDirection(environment.getMarioFloatPos());
+        this.marioRewards.directionalReward(environment.getMarioFloatPos());
 
         // TODO: Do something with the current environment observation
 
         WorldState state = new WorldState(environment);
 
-        System.out.println(marioRewards.getReward());
         // Update the Q table with the current state
         q_table.update(state);
     }
