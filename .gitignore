@@ -1,6 +1,3 @@
 out/
 .idea/
 *.xml
-src/edu/
-*.iml
-

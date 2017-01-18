@@ -18,13 +18,16 @@ public class QLearningAgent implements LearningAgent {
     private String name;
     private LearningTask learningTask;
     private WorldState state;
-    private Hashtable<WorldState, int[]> q_table;
     private Rewards marioRewards;
     private boolean initialRun = true;
+    private QTable q_table;
 
     public QLearningAgent() {
         setName("QLearning Agent");
     }
+
+    public static final float ALPHA = 0.1f;
+    public static final float GAMMA = 0.5f;
 
     public static void main(String[] args) {
         final MarioAIOptions marioAIOptions = new MarioAIOptions(args);
@@ -44,15 +47,14 @@ public class QLearningAgent implements LearningAgent {
       repeat ( for each step of episode)
         choose a from s using pi derived from Q
         perform a, observe r, s'
-        Q(s, a) ← Q(s, a) + α[r + γ maxa'Q'(s', a') - Q(s,a)]
-        s ← s
+        Q(s, a) ← Q(s, a) + α[r(s, a) + γ max a Q(s', a) - Q(s,a)]
+        s ← s'
       until s is terminal state
     */
     public void init() {
         // TODO: Tells our agent to initialise
-        q_table = new Hashtable<WorldState, int[]>();
         marioRewards = new Rewards();
-        //state = new WorldState();
+        q_table = new QTable();
         System.out.println("INIT STATE");
     }
     @Override
@@ -74,24 +76,18 @@ public class QLearningAgent implements LearningAgent {
         // TODO: Do something with the current environment observation
 
         WorldState state = new WorldState(environment);
-        int[] q_scores = {0, 0, 0, 0, 0, 0};
 
-        // Add to Q Table
-        if (!q_table.containsKey(state)) {
-            q_table.put(state, q_scores);
-        }
         System.out.println(marioRewards.getReward());
-        //System.out.println("Q Table: " + Arrays.asList(q_table));
+        // Update the Q table with the current state
+        q_table.update(state);
     }
 
     @Override
     public boolean[] getAction() {
         // TODO: Return action back to environment
-
-        boolean[] action = new boolean[6];
-        action[Mario.KEY_LEFT] = true;
-        //System.out.println("Action: " + action);
-        return action;
+        Action new_action = q_table.getNewAction();
+        boolean[] mario_action = new_action.toMarioAction(q_table.getNewActionIndex());
+        return mario_action;
     }
 
 
