@@ -53,6 +53,22 @@ public class WorldState {
         }
         return Objects.hash(fields);
     }
+
+
+    /**
+     * Returns a String representation of the WorldState
+     * @return String
+     */
+    @Override
+    public String toString() {
+        String response = "{";
+        for(Field field : WorldState.class.getDeclaredFields()) {
+            try {
+                response += field.getName() + ": " + field.get(this) + ", ";
+            } catch (IllegalAccessException e) {}
+        }
+        return response.substring(0, response.length()-2) + "}";
+    }
 }
 
 

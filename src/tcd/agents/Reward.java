@@ -5,11 +5,11 @@ import ch.idsia.tools.EvaluationInfo;
 
 public class Reward {
     private final float HIT_BY_ENEMY = -100;
-    private final float FORWARD = 1;
-    private final float BACKWARD = -0.5f;
+    private final float FORWARD = 10;
+    private final float BACKWARD = -5f;
     private final float FINISH = 100;
     private final float JUMP = 1;
-    private final float STUCK = -0.5f;
+    private final float STUCK = -10f;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -17,6 +17,8 @@ public class Reward {
 
     private int stuck_tick;
     private int last_distance_travelled;
+
+    private int enemies_collided;
 
     /**
      * Constructor for Reward class
@@ -26,6 +28,7 @@ public class Reward {
         prev_pos = -1;
         stuck_tick = 0;
         last_distance_travelled = 0;
+        enemies_collided = 0;
     }
 
     /**
@@ -41,9 +44,20 @@ public class Reward {
         // Add -0.5 reward if Mario gets stuck
         stuckReward(environment);
 
+        // Minus -100 reward if Mario collides with enemy
+        enemyHitReward(environment);
+
         // Add +100 reward if Mario has finished
         if(environment.isLevelFinished()){
             updateReward(FINISH);
+        }
+    }
+
+    public void enemyHitReward(Environment environment) {
+        EvaluationInfo evalInfo = environment.getEvaluationInfo();
+        if (enemies_collided < evalInfo.collisionsWithCreatures) {
+            updateReward(HIT_BY_ENEMY);
+            enemies_collided = evalInfo.collisionsWithCreatures;
         }
     }
 
@@ -74,13 +88,13 @@ public class Reward {
      */
     public void directionalReward(float[] position) {
         if(prev_pos > 0) {
-            if (position[1] > prev_pos) {
+            if (position[0] > prev_pos) {
                 updateReward(FORWARD);
             } else {
                 updateReward(BACKWARD);
             }
         }
-        prev_pos = position[1];
+        prev_pos = position[0];
     }
 
     /**
