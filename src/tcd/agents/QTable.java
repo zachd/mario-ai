@@ -7,7 +7,7 @@ public class QTable {
 
     private HashMap<WorldState, Action> table;
 
-    private int oldActionIndex;
+    private int oldActionIndex = -1;
     private WorldState oldState;
     private float oldReward;
 
@@ -36,10 +36,12 @@ public class QTable {
         float newReward = 0.0f;
 
         // Set Q Score for the old action
-        Action oldAction = table.get(oldState);
-        float oldActionScore = oldAction.getQScore(oldActionIndex) + QLearningAgent.ALPHA *
-                (oldReward + (QLearningAgent.GAMMA * newAction.getQScore(newActionIndex)) - oldAction.getQScore(oldActionIndex));
-        oldAction.setQScore(oldActionIndex, oldActionScore);
+        if(oldActionIndex != -1) {
+            Action oldAction = table.get(oldState);
+            float oldActionScore = oldAction.getQScore(oldActionIndex) + QLearningAgent.ALPHA *
+                    (oldReward + (QLearningAgent.GAMMA * newAction.getQScore(newActionIndex)) - oldAction.getQScore(oldActionIndex));
+            oldAction.setQScore(oldActionIndex, oldActionScore);
+        }
 
         // Save state of current state and action for next iteration
         oldState = newState;
