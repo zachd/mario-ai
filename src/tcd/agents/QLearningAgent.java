@@ -23,7 +23,7 @@ public class QLearningAgent implements LearningAgent {
 
     public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
-    public static final int NUMBER_OF_LEARNS = 10000;
+    public static final int NUMBER_OF_LEARNS = 0;
 
     private static boolean game_started = false;
 
@@ -68,7 +68,7 @@ public class QLearningAgent implements LearningAgent {
         int learnCount = 0;
         //System.out.println("learn session = "+learnCount);
         for(int i=0; i<NUMBER_OF_LEARNS;i++){
-           learningTask.runSingleEpisode(1);
+           learningTask.runSingleEpisode(2);
            //System.out.println("learn session = "+learnCount);
             learnCount++;
        }
