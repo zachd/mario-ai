@@ -2,23 +2,17 @@ package tcd.agents;
 
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
-import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
-
-import java.util.Hashtable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class QLearningAgent implements LearningAgent {
 
     private String name;
     private LearningTask learningTask;
     private WorldState state;
-    private Rewards marioRewards;
+    private Reward reward;
     private QTable q_table;
 
     public QLearningAgent() {
@@ -56,8 +50,8 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void init() {
         System.out.println("INIT STATE");
-        marioRewards = new Rewards();
-        q_table = new QTable(marioRewards);
+        reward = new Reward();
+        q_table = new QTable();
     }
 
     /**
@@ -74,14 +68,15 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void integrateObservation(Environment environment) {
-        this.marioRewards.directionalReward(environment.getMarioFloatPos());
 
-        // TODO: Do something with the current environment observation
-
+        // Get the worldstate representation of the environment
         WorldState state = new WorldState(environment);
 
+        // Update the state reward with the environment
+        reward.update(environment);
+
         // Update the Q table with the current state
-        q_table.update(state);
+        q_table.update(state, reward);
     }
 
     /**

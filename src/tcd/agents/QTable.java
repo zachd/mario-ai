@@ -14,19 +14,15 @@ public class QTable {
     private int newActionIndex;
     private Action newAction;
 
-    private Rewards marioReward;
-
-
-    public QTable(Rewards reward) {
+    public QTable() {
         table = new HashMap<WorldState, Action>();
-        marioReward = reward;
     }
 
     /**
      *  Updates the QTable with the Q score for the previous action.
      * @param newState The current WorldState
      */
-    public void update(WorldState newState){
+    public void update(WorldState newState, Reward newReward){
 
         // Add new state to QTable if it doesn't exist
         if(!table.containsKey(newState)){
@@ -36,7 +32,6 @@ public class QTable {
         // Get the best action for the new state
         newAction = table.get(newState);
         newActionIndex = newAction.getBestAction();
-        float newReward = marioReward.getReward();
 
         // Set Q Score for the old action
         if(oldActionIndex != -1) {
@@ -49,7 +44,7 @@ public class QTable {
         // Save state of current state and action for next iteration
         oldState = newState;
         oldActionIndex = newActionIndex;
-        oldReward = newReward;
+        oldReward = newReward.getRewardValue();
     }
 
     /**
