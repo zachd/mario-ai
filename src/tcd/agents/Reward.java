@@ -7,20 +7,22 @@ public class Reward {
     private final float HIT_BY_ENEMY = -50;
     private final float FORWARD = 10;
     private final float BACKWARD = -1;
-    private final float FINISH = 100;
-    private final float JUMP = 1;
+    private final float FINISH = 50;
     private final float STUCK = -10;
-    private final float KILL = 25;
+    private final float KILL = 20;
 
-    private static final int STUCK_THRESHOLD = 5;
-    private float prev_pos;
+    private static final int STUCK_THRESHOLD = 20;
+    private static final int STUCK_WINDOW = 3;
+    private float prev_xpos;
     private float current_reward;
 
     private int stuck_tick;
+    private boolean stuck;
+    private boolean moving_forward;
     private int last_distance_travelled;
+    private int last_enemies_collided;
+    private int last_enemies_killed;
 
-    private int enemies_collided;
-    private int enemies_killed;
     private byte[][] levelScene;
 
     /**
@@ -28,11 +30,11 @@ public class Reward {
      */
     public Reward() {
         current_reward = 0;
-        prev_pos = -1;
+        prev_xpos = -1;
         stuck_tick = 0;
         last_distance_travelled = 0;
-        enemies_collided = 0;
-        enemies_killed = 0;
+        last_enemies_collided = 0;
+        last_enemies_killed = 0;
     }
 
     /**
@@ -42,20 +44,21 @@ public class Reward {
     public void calculate(Environment environment) {
         current_reward = 0;
 
-        // Add +1 reward if Mario is going right, -0.5 if going left
-        directionalReward(environment.getMarioFloatPos());
+        // Add positive reward if Mario is going right, negative if going left
+        directionalReward(environment.getMarioFloatPos()[0]);
 
-        // Add -0.5 reward if Mario gets stuck
+        // Add negative reward if Mario gets stuck
         stuckReward(environment);
 
-        // Minus -100 reward if Mario collides with enemy
+        // Add negative reward if Mario collides with enemy
         enemyHitReward(environment);
 
-        senseImmediateEnvironment(environment);
+        //senseImmediateEnvironment(environment);
 
-        //Add 30 for killing an enemy
+        // Add positive reward for killing an enemy
         killReward(environment);
-        // Add +100 reward if Mario has finished
+
+        // Add large positive reward if Mario has finished
         if(environment.isLevelFinished()){
             updateReward(FINISH);
         }
@@ -66,7 +69,7 @@ public class Reward {
         for (int i=0; i<levelScene[0].length; i++) {
             for (int j=0; j<levelScene[1].length; j++) {
                 if ((levelScene[i][j] == 2)) {
-                    System.out.println("COIN! @ " + i + " and " + j);
+                    //System.out.println("COIN! @ " + i + " and " + j);
                 }
             }
         }
@@ -84,11 +87,15 @@ public class Reward {
         return levelScene[x][y];
     }
 
-    public void enemyHitReward(Environment environment) {
-        EvaluationInfo evalInfo = environment.getEvaluationInfo();
-        if (enemies_collided < evalInfo.collisionsWithCreatures) {
+    /**
+     * Negative reward if Mario is hit by an emeny
+     * @param env the environment
+     */
+    public void enemyHitReward(Environment env) {
+        EvaluationInfo evalInfo = env.getEvaluationInfo();
+        if (evalInfo.collisionsWithCreatures > last_enemies_collided) {
             updateReward(HIT_BY_ENEMY);
-            enemies_collided = evalInfo.collisionsWithCreatures;
+            last_enemies_collided = evalInfo.collisionsWithCreatures;
         }
     }
 
@@ -97,45 +104,45 @@ public class Reward {
      * @param environment
      */
     public void stuckReward(Environment environment){
-        EvaluationInfo evalInfo = environment.getEvaluationInfo();
-        int distance_travelled = evalInfo.distancePassedPhys;
-        if ((last_distance_travelled < (distance_travelled + 2)) && (last_distance_travelled > (distance_travelled - 2))) {
+        int distance_travelled = environment.getEvaluationInfo().distancePassedPhys;
+        if ((last_distance_travelled < (distance_travelled + STUCK_WINDOW))
+                && (last_distance_travelled > (distance_travelled - STUCK_WINDOW)))
             stuck_tick++;
-        }
-        else {
+        else
             stuck_tick = 0;
-        }
 
-        if(stuck_tick > STUCK_THRESHOLD){
+        if(stuck_tick > STUCK_THRESHOLD)
             updateReward(STUCK);
-            //System.out.println("STUCK");
-        }
+
+        stuck = stuck_tick > STUCK_THRESHOLD;
         last_distance_travelled = distance_travelled;
     }
 
     /**
-     * Factoring in rewards for Mario heading towards the goal (heading right)
-     * @param position
+     * Returns positive reward for moving right, negative for moving left
+     * @param current_xpos
      */
-    public void directionalReward(float[] position) {
-        if(prev_pos > 0) {
-            if (position[0] > prev_pos) {
+    public void directionalReward(float current_xpos) {
+        if(prev_xpos > 0) {
+            if (current_xpos > prev_xpos) {
                 updateReward(FORWARD);
+                moving_forward = true;
             } else {
                 updateReward(BACKWARD);
+                moving_forward = false;
             }
         }
-        prev_pos = position[0];
+        prev_xpos = current_xpos;
     }
 
     /**
-     * Reward for killing monsters
+     * Positive reward for killing enemies
      * @param env the enviroment
      */
     public void killReward(Environment env){
-        if(enemies_killed < env.getKillsTotal()){
+        if(env.getKillsTotal() > last_enemies_killed){
             updateReward(KILL);
-            enemies_killed = env.getKillsTotal();
+            last_enemies_killed = env.getKillsTotal();
         }
     }
     /**
@@ -147,10 +154,26 @@ public class Reward {
     }
 
     /**
-     * Returns the rewards value
-     * @return reward_value
+     * Returns the current reward value
+     * @return float reward_value
      */
     public float getReward() {
         return current_reward;
+    }
+
+    /**
+     * Returns if Mario is stuck or not
+     * @return true if stuck, false if not
+     */
+    public boolean isStuck(){
+        return stuck;
+    }
+
+    /**
+     * Returns Mario's direction
+     * @return true if forward, false if backwards
+     */
+    public boolean getDirection(){
+        return moving_forward;
     }
 }

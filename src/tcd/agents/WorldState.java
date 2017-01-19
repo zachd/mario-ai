@@ -14,8 +14,8 @@ public class WorldState {
     // Public fields are included in WorldState equals/hashCode
     public boolean on_ground;
     public boolean able_to_jump;
-    public boolean able_to_shoot;
-    public boolean direction;
+    public boolean moving_forward;
+    public boolean stuck;
     public boolean enemies_infront_near;
     public boolean enemies_infront_med;
     public boolean enemies_infront_far;
@@ -24,23 +24,17 @@ public class WorldState {
     public boolean enemies_behind_far;
     public int mode;
 
-    // Private fields can be used for calculation or storage
-    private float mario_x = 0;
-    private float mario_y = 0;
-    private float enemy_xpos;
-    private float enemy_ypos;
-    private static final float NEAR = 30f;
-    private static final float MED = 120f;
-    private static final float FAR = 200f;
+    // Private fields can be used for calculation
+    private static final float NEAR = 10f;
+    private static final float MED = 50f;
+    private static final float FAR = 100f;
 
-    public WorldState(Environment environment) {
+    public WorldState(Environment environment, Reward reward) {
         on_ground = environment.isMarioOnGround();
         able_to_jump = environment.isMarioAbleToJump();
-        able_to_shoot = environment.isMarioAbleToShoot();
-        direction = environment.getMarioFloatPos()[0] > mario_x;
+        //moving_forward = reward.getDirection();
+        stuck = reward.isStuck();
         mode = environment.getMarioMode();
-        mario_x = environment.getMarioFloatPos()[0];
-        mario_y = environment.getMarioFloatPos()[1];
         updateEnemyPosition(environment);
     }
 
@@ -58,8 +52,8 @@ public class WorldState {
 
         float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
         for(int i=0;i<enemies.length; i+=3){
-            enemy_xpos = enemies[i+1];
-            enemy_ypos = enemies[i+2];
+            float enemy_xpos = enemies[i+1];
+            float enemy_ypos = enemies[i+2];
             if(enemy_xpos > 0){
                 if(enemy_xpos <= NEAR && (enemy_ypos <= NEAR || enemy_ypos >= -NEAR)){
                     enemies_infront_near = true;

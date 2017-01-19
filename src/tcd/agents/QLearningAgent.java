@@ -2,9 +2,11 @@ package tcd.agents;
 
 import ch.idsia.agents.Agent;
 import ch.idsia.agents.LearningAgent;
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.benchmark.tasks.BasicTask;
 import ch.idsia.benchmark.tasks.LearningTask;
+import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 
 import java.util.Arrays;
@@ -35,19 +37,21 @@ public class QLearningAgent implements LearningAgent {
     public static void main(String[] args) {
         // Set up options
         MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-        marioAIOptions.setArgs("-ls 48");
+        //marioAIOptions.setArgs("-ls 48");
         LearningAgent agent = new QLearningAgent();
-        agent.setObservationDetails(1, 1, 1, 1);
         marioAIOptions.setAgent(agent);
 
         // Learning task
         learningTask = new LearningTask(marioAIOptions);
-        agent.init();
         marioAIOptions.setVisualization(false);
+        System.out.println("INIT STATE");
+        agent.init();
+        System.out.println("LEARN STATE");
         agent.learn();
 
         // Gameplay task
-        learning_complete = true;
+        //learning_complete = true;
+        System.out.println("GAMEPLAY STATE");
         marioAIOptions.setVisualization(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);
         basicTask.setOptionsAndReset(marioAIOptions);
@@ -59,7 +63,6 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void init() {
-        System.out.println("INIT STATE");
         reward = new Reward();
         q_table = new QTable();
     }
@@ -69,11 +72,24 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void learn() {
-        for(int i=0; i<NUMBER_OF_LEARNS;i++){
-           learningTask.runSingleEpisode(1);
-            if(i % (NUMBER_OF_LEARNS/10) == 0)
-                System.out.println("Learning: " + (int)((float)i/NUMBER_OF_LEARNS * 100) + "%");
-       }
+        int kills = 0, wins = 0, time = 0, coins = 0, score = 0;
+        for(int i=0; i<NUMBER_OF_LEARNS;i++) {
+            learningTask.runSingleEpisode(1);
+            // Add eval data
+            EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
+            kills += eval.killsTotal;
+            wins += (eval.marioStatus == Mario.STATUS_WIN ? 1 : 0);
+            time += eval.timeSpent;
+            coins += eval.coinsGained;
+            score += eval.computeWeightedFitness();
+            if (i % (NUMBER_OF_LEARNS / 10) == 0)
+                System.out.println("Learning: " + (int) ((float) i / NUMBER_OF_LEARNS * 100) + "%");
+        }
+        System.out.println("\nLEARNING RESULTS");
+        System.out.println("# of Wins: " + wins);
+        System.out.println("Avg Kills: " + (float)kills/NUMBER_OF_LEARNS + " | Avg Time: " +
+                (float)time/NUMBER_OF_LEARNS + "\nAvg Coins: " + (float)coins/NUMBER_OF_LEARNS +
+                " | Avg Score: " + (float)score/NUMBER_OF_LEARNS + "\n");
     }
 
     /**
@@ -83,10 +99,10 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void integrateObservation(Environment environment) {
         if (game_started) {
-            // Get the worldstate representation of the environment
-            WorldState state = new WorldState(environment);
             // Update the state reward with the environment
             reward.calculate(environment);
+            // Get the worldstate representation of the environment
+            WorldState state = new WorldState(environment, reward);
             // Update the Q table with the current state
             q_table.update(state, reward);
         } else if (environment.isMarioOnGround()) {
