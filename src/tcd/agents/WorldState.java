@@ -16,19 +16,21 @@ public class WorldState {
     public boolean able_to_jump;
     public boolean able_to_shoot;
     public boolean direction;
-    public int enemies_infront_near;
-    public int enemies_infront_med;
-    public int enemies_infront_far;
-    public int enemies_behind_near;
-    public int enemies_behind_med;
-    public int enemies_behind_far;
+    public boolean enemies_infront_near;
+    public boolean enemies_infront_med;
+    public boolean enemies_infront_far;
+    public boolean enemies_behind_near;
+    public boolean enemies_behind_med;
+    public boolean enemies_behind_far;
     public int mode;
 
     // Private fields can be used for calculation or storage
     private float mario_x = 0;
     private float mario_y = 0;
-    private static final float NEAR = 50f;
-    private static final float MED = 150f;
+    private float enemy_xpos;
+    private float enemy_ypos;
+    private static final float NEAR = 30f;
+    private static final float MED = 120f;
     private static final float FAR = 200f;
 
     public WorldState(Environment environment) {
@@ -47,37 +49,38 @@ public class WorldState {
      * @param environment the current environment
      */
     public void updateEnemyPosition(Environment environment){
-        enemies_infront_near = 0;
-        enemies_infront_med = 0;
-        enemies_infront_far = 0;
-        enemies_behind_near = 0;
-        enemies_behind_med = 0;
-        enemies_behind_far = 0;
-        float enemy_xpos;
+        enemies_infront_near = false;
+        enemies_infront_med = false;
+        enemies_infront_far = false;
+        enemies_behind_near = false;
+        enemies_behind_med = false;
+        enemies_behind_far = false;
+
         float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
         for(int i=0;i<enemies.length; i+=3){
             enemy_xpos = enemies[i+1];
+            enemy_ypos = enemies[i+2];
             if(enemy_xpos > 0){
-                if(enemy_xpos <= NEAR){
-                    enemies_infront_near++;
+                if(enemy_xpos <= NEAR && (enemy_ypos <= NEAR || enemy_ypos >= -NEAR)){
+                    enemies_infront_near = true;
                 }
-                else if(enemy_xpos <= MED){
-                    enemies_infront_med++;
+                else if(enemy_xpos <= MED && (enemy_ypos <= MED || enemy_ypos >=-MED)){
+                    enemies_infront_med = true;
                 }
-                else{
-                    enemies_infront_far++;
+                else if(enemy_ypos <= FAR || enemy_ypos >= -FAR){
+                    enemies_infront_far = true;
                 }
 
             }
             else if(enemies[i+1] < 0) {
-                if(enemy_xpos <= -NEAR){
-                    enemies_behind_near++;
+                if(enemy_xpos <= -NEAR && (enemy_ypos <= NEAR || enemy_ypos >= -NEAR)){
+                    enemies_behind_near = true;
                 }
-                else if(enemy_xpos <= -MED){
-                    enemies_behind_med++;
+                else if(enemy_xpos <= -MED && (enemy_ypos <= MED || enemy_ypos >= -MED)){
+                    enemies_behind_med = true;
                 }
-                else{
-                    enemies_behind_far++;
+                else if(enemy_ypos <= FAR || enemy_ypos >= -FAR){
+                    enemies_behind_far = true;
                 }
             }
         }
