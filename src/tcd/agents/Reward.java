@@ -21,7 +21,7 @@ public class Reward {
 
     private int enemies_collided;
     private int enemies_killed;
-
+    private byte[][] levelScene;
 
     /**
      * Constructor for Reward class
@@ -62,15 +62,26 @@ public class Reward {
     }
 
     public void senseImmediateEnvironment(Environment environment) {
-        byte[][] levelScene = environment.getLevelSceneObservationZ(0);
-        for (int i = 0; i < levelScene.length; i++) {
-            for (int j = 0; j < levelScene.length; j++) {
-                if (levelScene[i][j] != 0) {
-                    //System.out.println(levelScene[i][j]);
+        levelScene = environment.getLevelSceneObservationZ(2);
+        for (int i=0; i<levelScene[0].length; i++) {
+            for (int j=0; j<levelScene[1].length; j++) {
+                if ((levelScene[i][j] == 2)) {
+                    System.out.println("COIN! @ " + i + " and " + j);
                 }
             }
         }
-        //System.out.println();
+//        System.out.println(environment.getMarioFloatPos()[0]);
+//        System.out.println(environment.getMarioFloatPos()[1]);
+//        if (getReceptiveFieldCellValue((int)environment.getMarioFloatPos()[0], (int)environment.getMarioFloatPos()[1]) == 2) {
+//            System.out.println("COIN");
+//        }
+    }
+
+    public int getReceptiveFieldCellValue(int x, int y)
+    {
+        if (x < 0 || x >= levelScene.length || y < 0 || y >= levelScene[0].length)
+            return 0;
+        return levelScene[x][y];
     }
 
     public void enemyHitReward(Environment environment) {

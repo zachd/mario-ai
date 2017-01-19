@@ -37,6 +37,7 @@ public class QLearningAgent implements LearningAgent {
         MarioAIOptions marioAIOptions = new MarioAIOptions(args);
         marioAIOptions.setArgs("-ls 48");
         LearningAgent agent = new QLearningAgent();
+        agent.setObservationDetails(1, 1, 1, 1);
         marioAIOptions.setAgent(agent);
 
         // Learning task
