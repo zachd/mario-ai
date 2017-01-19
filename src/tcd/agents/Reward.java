@@ -10,6 +10,7 @@ public class Reward {
     private final float FINISH = 100;
     private final float JUMP = 1;
     private final float STUCK = -10f;
+    private final float KILL = 30f;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -19,6 +20,8 @@ public class Reward {
     private int last_distance_travelled;
 
     private int enemies_collided;
+    private int enemies_killed;
+
 
     /**
      * Constructor for Reward class
@@ -29,6 +32,7 @@ public class Reward {
         stuck_tick = 0;
         last_distance_travelled = 0;
         enemies_collided = 0;
+        enemies_killed = 0;
     }
 
     /**
@@ -49,6 +53,8 @@ public class Reward {
 
         senseImmediateEnvironment(environment);
 
+        //Add 30 for killing an enemy
+        killReward(environment);
         // Add +100 reward if Mario has finished
         if(environment.isLevelFinished()){
             updateReward(FINISH);
@@ -111,6 +117,16 @@ public class Reward {
         prev_pos = position[0];
     }
 
+    /**
+     * Reward for killing monsters
+     * @param env the enviroment
+     */
+    public void killReward(Environment env){
+        if(enemies_killed < env.getKillsTotal()){
+            updateReward(KILL);
+            enemies_killed = env.getKillsTotal();
+        }
+    }
     /**
      * Updates the reward variable at any one episode
      * @param reward
