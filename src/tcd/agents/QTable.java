@@ -1,15 +1,17 @@
 package tcd.agents;
 
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class QTable {
 
     private HashMap<WorldState, Action> table;
 
-    private int prevActionIndex = -1;
-    private WorldState prevState;
-    private float prevReward;
+    public int prevActionIndex = -1;
+    public WorldState prevState;
+    public float prevReward;
+    public Action prevAction;
 
     private int actionIndex;
     private Action action;
@@ -36,10 +38,21 @@ public class QTable {
 
         // Set Q Score for the old action
         if(prevActionIndex != -1) {
-            Action oldAction = table.get(prevState);
-            float oldActionScore = oldAction.getQScore(prevActionIndex) + QLearningAgent.ALPHA *
-                    (prevReward + (QLearningAgent.GAMMA * action.getQScore(actionIndex)) - oldAction.getQScore(prevActionIndex));
-            oldAction.setQScore(prevActionIndex, oldActionScore);
+            prevAction = table.get(prevState);
+            float oldActionScore = prevAction.getQScore(prevActionIndex) + QLearningAgent.ALPHA *
+                    (prevReward + (QLearningAgent.GAMMA * action.getQScore(actionIndex)) - prevAction.getQScore(prevActionIndex));
+            prevAction.setQScore(prevActionIndex, oldActionScore);
+
+            // Debugging parameters
+            if(QLearningAgent.learning_complete) {
+                System.out.println("\u23BE Current State: " + state);
+                System.out.println("\u23B9 Prev action: Mario." + prevAction.action_terms[prevActionIndex]
+                        + " (Q: " + prevAction.qScore[prevActionIndex] + ")");
+                System.out.println("\u23B9 Prev Reward: " + prevReward);
+                System.out.println("\u23B9 Next Max Action: " + action.action_terms[actionIndex]
+                        + " (Q: " + action.qScore[actionIndex] + ")");
+                System.out.println("\u23BF Q Scores: " + Arrays.toString(action.qScore));
+            }
         }
 
         // Save state of current state and action for next iteration

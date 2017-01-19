@@ -4,13 +4,13 @@ import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
 public class Reward {
-    private final float HIT_BY_ENEMY = -100;
+    private final float HIT_BY_ENEMY = -50;
     private final float FORWARD = 10;
-    //private final float BACKWARD = -5f;
+    private final float BACKWARD = -1;
     private final float FINISH = 100;
     private final float JUMP = 1;
-    private final float STUCK = -10f;
-    private final float KILL = 30f;
+    private final float STUCK = -10;
+    private final float KILL = 25;
 
     private static final int STUCK_THRESHOLD = 5;
     private float prev_pos;
@@ -66,11 +66,11 @@ public class Reward {
         for (int i = 0; i < levelScene.length; i++) {
             for (int j = 0; j < levelScene.length; j++) {
                 if (levelScene[i][j] != 0) {
-                    System.out.println(levelScene[i][j]);
+                    //System.out.println(levelScene[i][j]);
                 }
             }
         }
-        System.out.println();
+        //System.out.println();
     }
 
     public void enemyHitReward(Environment environment) {
@@ -111,7 +111,7 @@ public class Reward {
             if (position[0] > prev_pos) {
                 updateReward(FORWARD);
             } else {
-                //updateReward(BACKWARD);
+                updateReward(BACKWARD);
             }
         }
         prev_pos = position[0];

@@ -24,13 +24,12 @@ public class WorldState {
     public int enemies_behind_far;
     public int mode;
 
-    public static final float NEAR = 50f;
-    public static final float MED = 150f;
-    public static final float FAR = 200f;
-
     // Private fields can be used for calculation or storage
     private float mario_x = 0;
     private float mario_y = 0;
+    private static final float NEAR = 50f;
+    private static final float MED = 150f;
+    private static final float FAR = 200f;
 
     public WorldState(Environment environment) {
         on_ground = environment.isMarioOnGround();

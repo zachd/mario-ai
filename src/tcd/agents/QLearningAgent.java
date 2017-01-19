@@ -25,7 +25,8 @@ public class QLearningAgent implements LearningAgent {
     public static final float GAMMA = 0.5f;
     public static final int NUMBER_OF_LEARNS = 1000;
 
-    private static boolean game_started = false;
+    public static boolean game_started = false;
+    public static boolean learning_complete = false;
 
     /**
      * Main task to test the Q-Learning Agent
@@ -42,9 +43,10 @@ public class QLearningAgent implements LearningAgent {
         learningTask = new LearningTask(marioAIOptions);
         agent.init();
         marioAIOptions.setVisualization(false);
-        //agent.learn();
+        agent.learn();
 
         // Gameplay task
+        learning_complete = true;
         marioAIOptions.setVisualization(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);
         basicTask.setOptionsAndReset(marioAIOptions);
@@ -86,7 +88,6 @@ public class QLearningAgent implements LearningAgent {
             reward.calculate(environment);
             // Update the Q table with the current state
             q_table.update(state, reward);
-            System.out.println("\u23BE State: " + state);
         } else if (environment.isMarioOnGround()) {
             game_started = true;
         }
@@ -102,14 +103,9 @@ public class QLearningAgent implements LearningAgent {
         int action_index = 0;
         try {
             new_action = q_table.getNewAction();
-            System.out.println("\u23B9 Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
-                    + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
-            System.out.println("\u23B9 Reward: " + reward.getReward());
-            System.out.println("\u23BF  Q Scores: " + Arrays.toString(new_action.qScore));
             action_index = q_table.getNewActionIndex();
             return new_action.toMarioAction(action_index);
-        } catch (NullPointerException e) {
-            System.out.println("Doing nothing");
+        } catch (Exception e) {
             return (new Action()).toMarioAction(action_index);
         }
     }
