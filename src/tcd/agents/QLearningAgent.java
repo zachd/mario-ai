@@ -8,6 +8,7 @@ import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.MarioAIOptions;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 public class QLearningAgent implements LearningAgent {
 
@@ -16,14 +17,13 @@ public class QLearningAgent implements LearningAgent {
     private WorldState state;
     private Reward reward;
     private QTable q_table;
-
     public QLearningAgent() {
         setName("QLearning Agent");
     }
 
     public static final float ALPHA = 1.0f;
     public static final float GAMMA = 0.5f;
-    public static final int NUMBER_OF_LEARNS = 10000;
+    public static final int NUMBER_OF_LEARNS = 1000;
 
     private static boolean game_started = false;
 
@@ -34,6 +34,7 @@ public class QLearningAgent implements LearningAgent {
     public static void main(String[] args) {
         // Set up options
         MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+        marioAIOptions.setArgs("-ls 48");
         LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
 
@@ -41,7 +42,7 @@ public class QLearningAgent implements LearningAgent {
         learningTask = new LearningTask(marioAIOptions);
         agent.init();
         marioAIOptions.setVisualization(false);
-        agent.learn();
+        //agent.learn();
 
         // Gameplay task
         marioAIOptions.setVisualization(true);
@@ -55,7 +56,7 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void init() {
-        //System.out.println("INIT STATE");
+        System.out.println("INIT STATE");
         reward = new Reward();
         q_table = new QTable();
     }
@@ -65,12 +66,10 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void learn() {
-        int learnCount = 0;
-        //System.out.println("learn session = "+learnCount);
         for(int i=0; i<NUMBER_OF_LEARNS;i++){
            learningTask.runSingleEpisode(1);
-           //System.out.println("learn session = "+learnCount);
-            learnCount++;
+            if(i % (NUMBER_OF_LEARNS/10) == 0)
+                System.out.println("Learning: " + (int)((float)i/NUMBER_OF_LEARNS * 100) + "%");
        }
     }
 
@@ -87,7 +86,7 @@ public class QLearningAgent implements LearningAgent {
             reward.calculate(environment);
             // Update the Q table with the current state
             q_table.update(state, reward);
-            //System.out.println("\u23BE State: " + state);
+            System.out.println("\u23BE State: " + state);
         } else if (environment.isMarioOnGround()) {
             game_started = true;
         }
@@ -103,14 +102,14 @@ public class QLearningAgent implements LearningAgent {
         int action_index = 0;
         try {
             new_action = q_table.getNewAction();
-            //System.out.println("\u23B9 Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
-            //        + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
-            //System.out.println("\u23B9 Reward: " + reward.getReward());
-            //System.out.println("\u23BF  Q Scores: " + Arrays.toString(new_action.qScore));
+            System.out.println("\u23B9 Chosen action: Mario." + Action.action_terms[q_table.getNewActionIndex()]
+                    + " (Q: " + new_action.qScore[q_table.getNewActionIndex()] +")");
+            System.out.println("\u23B9 Reward: " + reward.getReward());
+            System.out.println("\u23BF  Q Scores: " + Arrays.toString(new_action.qScore));
             action_index = q_table.getNewActionIndex();
             return new_action.toMarioAction(action_index);
         } catch (NullPointerException e) {
-            //System.out.println("Doing nothing");
+            System.out.println("Doing nothing");
             return (new Action()).toMarioAction(action_index);
         }
     }

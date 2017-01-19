@@ -11,16 +11,25 @@ import java.util.Objects;
  */
 public class WorldState {
 
+    // Public fields are included in WorldState equals/hashCode
     public boolean on_ground;
     public boolean able_to_jump;
     public boolean able_to_shoot;
+    public boolean direction;
     public int mode;
+
+    // Private fields can be used for calculation or storage
+    private float mario_x = 0;
+    private float mario_y = 0;
 
     public WorldState(Environment environment) {
         on_ground = environment.isMarioOnGround();
         able_to_jump = environment.isMarioAbleToJump();
         able_to_shoot = environment.isMarioAbleToShoot();
+        direction = environment.getMarioFloatPos()[0] > mario_x;
         mode = environment.getMarioMode();
+        mario_x = environment.getMarioFloatPos()[0];
+        mario_y = environment.getMarioFloatPos()[1];
     }
 
     /**
@@ -30,7 +39,7 @@ public class WorldState {
      */
     @Override
     public boolean equals(Object input) {
-        for(Field field : WorldState.class.getDeclaredFields()) {
+        for(Field field : WorldState.class.getFields()) {
             try {
                 if (!field.get(this).equals(field.get(input)))
                     return false;
@@ -46,7 +55,7 @@ public class WorldState {
     @Override
     public int hashCode(){
         ArrayList<Object> fields = new ArrayList<Object>();
-        for(Field field : WorldState.class.getDeclaredFields()) {
+        for(Field field : WorldState.class.getFields()) {
             try {
                 fields.add(field.get(this));
             } catch (IllegalAccessException e) {}
@@ -62,7 +71,7 @@ public class WorldState {
     @Override
     public String toString() {
         String response = "{";
-        for(Field field : WorldState.class.getDeclaredFields()) {
+        for(Field field : WorldState.class.getFields()) {
             try {
                 response += field.getName() + ": " + field.get(this) + ", ";
             } catch (IllegalAccessException e) {}
