@@ -47,10 +47,24 @@ public class Reward {
         // Minus -100 reward if Mario collides with enemy
         enemyHitReward(environment);
 
+        senseImmediateEnvironment(environment);
+
         // Add +100 reward if Mario has finished
         if(environment.isLevelFinished()){
             updateReward(FINISH);
         }
+    }
+
+    public void senseImmediateEnvironment(Environment environment) {
+        byte[][] levelScene = environment.getLevelSceneObservationZ(0);
+        for (int i = 0; i < levelScene.length; i++) {
+            for (int j = 0; j < levelScene.length; j++) {
+                if (levelScene[i][j] != 0) {
+                    System.out.println(levelScene[i][j]);
+                }
+            }
+        }
+        System.out.println();
     }
 
     public void enemyHitReward(Environment environment) {
