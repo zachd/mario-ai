@@ -16,9 +16,17 @@ public class WorldState {
     public boolean able_to_jump;
     public boolean able_to_shoot;
     public boolean direction;
-    public int enemies_infront;
-    public int enemies_behind;
+    public int enemies_infront_near;
+    public int enemies_infront_med;
+    public int enemies_infront_far;
+    public int enemies_behind_near;
+    public int enemies_behind_med;
+    public int enemies_behind_far;
     public int mode;
+
+    public static final float NEAR = 50f;
+    public static final float MED = 150f;
+    public static final float FAR = 200f;
 
     // Private fields can be used for calculation or storage
     private float mario_x = 0;
@@ -40,15 +48,38 @@ public class WorldState {
      * @param environment the current environment
      */
     public void updateEnemyPosition(Environment environment){
-        enemies_infront = 0;
-        enemies_behind = 0;
+        enemies_infront_near = 0;
+        enemies_infront_med = 0;
+        enemies_infront_far = 0;
+        enemies_behind_near = 0;
+        enemies_behind_med = 0;
+        enemies_behind_far = 0;
+        float enemy_xpos;
         float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
         for(int i=0;i<enemies.length; i+=3){
-            if(enemies[i+1] > 0){
-                enemies_infront++;
+            enemy_xpos = enemies[i+1];
+            if(enemy_xpos > 0){
+                if(enemy_xpos <= NEAR){
+                    enemies_infront_near++;
+                }
+                else if(enemy_xpos <= MED){
+                    enemies_infront_med++;
+                }
+                else{
+                    enemies_infront_far++;
+                }
+
             }
             else if(enemies[i+1] < 0) {
-                enemies_behind++;
+                if(enemy_xpos <= -NEAR){
+                    enemies_behind_near++;
+                }
+                else if(enemy_xpos <= -MED){
+                    enemies_behind_med++;
+                }
+                else{
+                    enemies_behind_far++;
+                }
             }
         }
     }
