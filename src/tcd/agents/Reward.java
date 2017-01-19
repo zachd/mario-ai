@@ -1,17 +1,18 @@
 package tcd.agents;
 
+import ch.idsia.benchmark.mario.engine.sprites.Mario;
 import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
 public class Reward {
     private final float HIT_BY_ENEMY = -50;
     private final float FORWARD = 10;
-    private final float BACKWARD = -1;
-    private final float FINISH = 50;
-    private final float STUCK = -10;
-    private final float KILL = 20;
+    private final float BACKWARD = -5;
+    private final float FINISH = 100;
+    private final float STUCK = -20;
+    private final float KILL = 10;
 
-    private static final int STUCK_THRESHOLD = 20;
+    private static final int STUCK_THRESHOLD = 10;
     private static final int STUCK_WINDOW = 3;
     private float prev_xpos;
     private float current_reward;
@@ -56,10 +57,10 @@ public class Reward {
         //senseImmediateEnvironment(environment);
 
         // Add positive reward for killing an enemy
-        killReward(environment);
+        //killReward(environment);
 
         // Add large positive reward if Mario has finished
-        if(environment.isLevelFinished()){
+        if(environment.getMarioStatus() == Mario.STATUS_WIN){
             updateReward(FINISH);
         }
     }
