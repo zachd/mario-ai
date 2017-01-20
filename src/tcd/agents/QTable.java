@@ -39,8 +39,8 @@ public class QTable {
         // Set Q Score for the old action
         if(prevActionIndex != -1) {
             prevAction = table.get(prevState);
-            float oldActionScore = prevAction.getQScore(prevActionIndex) + QLearningAgent.ALPHA *
-                    (prevReward + (QLearningAgent.GAMMA * action.getQScore(actionIndex)) - prevAction.getQScore(prevActionIndex));
+            float oldActionScore = prevAction.getQScore(prevActionIndex) + Params.ALPHA *
+                    (prevReward + (Params.GAMMA * action.getQScore(actionIndex)) - prevAction.getQScore(prevActionIndex));
             prevAction.setQScore(prevActionIndex, oldActionScore);
 
             // Debugging parameters

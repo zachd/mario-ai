@@ -34,9 +34,6 @@ public class WorldState {
     private int obstacle_search_iEnd = mario_in_levelScene + 0;
     private int obstacle_search_jEnd = mario_in_levelScene + 1;
 
-    private static final float NEAR = 10f;
-    private static final float MED = 50f;
-    private static final float FAR = 100f;
 
     public WorldState(Environment environment, Reward reward) {
         on_ground = environment.isMarioOnGround();
@@ -78,25 +75,25 @@ public class WorldState {
             float enemy_xpos = enemies[i+1];
             float enemy_ypos = enemies[i+2];
             if(enemy_xpos > 0){
-                if(enemy_xpos <= NEAR && (enemy_ypos <= NEAR || enemy_ypos >= -NEAR)){
+                if(enemy_xpos <= Params.NEAR && (enemy_ypos <= Params.NEAR || enemy_ypos >= -Params.NEAR)){
                     enemies_infront_near = true;
                 }
-                else if(enemy_xpos <= MED && (enemy_ypos <= MED || enemy_ypos >=-MED)){
+                else if(enemy_xpos <= Params.MED && (enemy_ypos <= Params.MED || enemy_ypos >=-Params.MED)){
                     enemies_infront_med = true;
                 }
-                else if(enemy_ypos <= FAR || enemy_ypos >= -FAR){
+                else if(enemy_ypos <= Params.FAR || enemy_ypos >= -Params.FAR){
                     enemies_infront_far = true;
                 }
 
             }
             else if(enemies[i+1] < 0) {
-                if(enemy_xpos <= -NEAR && (enemy_ypos <= NEAR || enemy_ypos >= -NEAR)){
+                if(enemy_xpos <= -Params.NEAR && (enemy_ypos <= Params.NEAR || enemy_ypos >= -Params.NEAR)){
                     enemies_behind_near = true;
                 }
-                else if(enemy_xpos <= -MED && (enemy_ypos <= MED || enemy_ypos >= -MED)){
+                else if(enemy_xpos <= -Params.MED && (enemy_ypos <= Params.MED || enemy_ypos >= -Params.MED)){
                     enemies_behind_med = true;
                 }
-                else if(enemy_ypos <= FAR || enemy_ypos >= -FAR){
+                else if(enemy_ypos <= Params.FAR || enemy_ypos >= -Params.FAR){
                     enemies_behind_far = true;
                 }
             }

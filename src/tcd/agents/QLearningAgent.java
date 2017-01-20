@@ -23,9 +23,6 @@ public class QLearningAgent implements LearningAgent {
         setName("QLearning Agent");
     }
 
-    public static final float ALPHA = 1.0f;
-    public static final float GAMMA = 0.5f;
-    public static final int NUMBER_OF_LEARNS = 1000;
 
     public static boolean game_started = false;
     public static boolean learning_complete = false;
@@ -37,7 +34,7 @@ public class QLearningAgent implements LearningAgent {
     public static void main(String[] args) {
         // Set up options
         MarioAIOptions marioAIOptions = new MarioAIOptions(args);
-        //marioAIOptions.setArgs("-ls 48");
+        marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
         LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
 
@@ -73,7 +70,7 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void learn() {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0;
-        for(int i=0; i<NUMBER_OF_LEARNS;i++) {
+        for(int i=0; i<Params.NUMBER_OF_LEARNS;i++) {
             learningTask.runSingleEpisode(1);
             // Add eval data
             EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
@@ -82,14 +79,14 @@ public class QLearningAgent implements LearningAgent {
             time += eval.timeSpent;
             coins += eval.coinsGained;
             score += eval.computeWeightedFitness();
-            if (i % (NUMBER_OF_LEARNS / 10) == 0)
-                System.out.println("Learning: " + (int) ((float) i / NUMBER_OF_LEARNS * 100) + "%");
+            if (i % (Params.NUMBER_OF_LEARNS / 10) == 0)
+                System.out.println("Learning: " + (int) ((float) i / Params.NUMBER_OF_LEARNS * 100) + "%");
         }
         System.out.println("\nLEARNING RESULTS");
         System.out.println("# of Wins: " + wins);
-        System.out.println("Avg Kills: " + (float)kills/NUMBER_OF_LEARNS + " | Avg Time: " +
-                (float)time/NUMBER_OF_LEARNS + "\nAvg Coins: " + (float)coins/NUMBER_OF_LEARNS +
-                " | Avg Score: " + (float)score/NUMBER_OF_LEARNS + "\n");
+        System.out.println("Avg Kills: " + (float)kills/Params.NUMBER_OF_LEARNS + " | Avg Time: " +
+                (float)time/Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float)coins/Params.NUMBER_OF_LEARNS +
+                " | Avg Score: " + (float)score/Params.NUMBER_OF_LEARNS + "\n");
     }
 
     /**

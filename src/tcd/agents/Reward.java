@@ -5,15 +5,6 @@ import ch.idsia.benchmark.mario.environments.Environment;
 import ch.idsia.tools.EvaluationInfo;
 
 public class Reward {
-    private final float HIT_BY_ENEMY = -50;
-    private final float FORWARD = 10;
-    private final float BACKWARD = -5;
-    private final float FINISH = 100;
-    private final float STUCK = -20;
-    private final float KILL = 10;
-
-    private static final int STUCK_THRESHOLD = 10;
-    private static final int STUCK_WINDOW = 3;
     private float prev_xpos;
     private float current_reward;
 
@@ -61,7 +52,7 @@ public class Reward {
 
         // Add large positive reward if Mario has finished
         if(environment.getMarioStatus() == Mario.STATUS_WIN){
-            updateReward(FINISH);
+            updateReward(Params.FINISH);
         }
     }
 
@@ -95,7 +86,7 @@ public class Reward {
     public void enemyHitReward(Environment env) {
         EvaluationInfo evalInfo = env.getEvaluationInfo();
         if (evalInfo.collisionsWithCreatures > last_enemies_collided) {
-            updateReward(HIT_BY_ENEMY);
+            updateReward(Params.HIT_BY_ENEMY);
             last_enemies_collided = evalInfo.collisionsWithCreatures;
         }
     }
@@ -106,16 +97,16 @@ public class Reward {
      */
     public void stuckReward(Environment environment){
         int distance_travelled = environment.getEvaluationInfo().distancePassedPhys;
-        if ((last_distance_travelled < (distance_travelled + STUCK_WINDOW))
-                && (last_distance_travelled > (distance_travelled - STUCK_WINDOW)))
+        if ((last_distance_travelled < (distance_travelled + Params.STUCK_WINDOW))
+                && (last_distance_travelled > (distance_travelled - Params.STUCK_WINDOW)))
             stuck_tick++;
         else
             stuck_tick = 0;
 
-        if(stuck_tick > STUCK_THRESHOLD)
-            updateReward(STUCK);
+        if(stuck_tick > Params.STUCK_THRESHOLD)
+            updateReward(Params.STUCK);
 
-        stuck = stuck_tick > STUCK_THRESHOLD;
+        stuck = stuck_tick > Params.STUCK_THRESHOLD;
         last_distance_travelled = distance_travelled;
     }
 
@@ -126,10 +117,10 @@ public class Reward {
     public void directionalReward(float current_xpos) {
         if(prev_xpos > 0) {
             if (current_xpos > prev_xpos) {
-                updateReward(FORWARD);
+                updateReward(Params.FORWARD);
                 moving_forward = true;
             } else {
-                updateReward(BACKWARD);
+                updateReward(Params.BACKWARD);
                 moving_forward = false;
             }
         }
@@ -142,7 +133,7 @@ public class Reward {
      */
     public void killReward(Environment env){
         if(env.getKillsTotal() > last_enemies_killed){
-            updateReward(KILL);
+            updateReward(Params.KILL);
             last_enemies_killed = env.getKillsTotal();
         }
     }
