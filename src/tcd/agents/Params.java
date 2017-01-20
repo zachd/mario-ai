@@ -4,7 +4,7 @@ public class Params {
     // Learning Params
     public static final float ALPHA = 0.8f;
     public static final float GAMMA = 0.6f;
-    public static final int NUMBER_OF_LEARNS = 1000;
+    public static final int NUMBER_OF_LEARNS = 10000;
 
     // Level Seed Params
     public static final int EASY = 0;
@@ -15,6 +15,11 @@ public class Params {
     public static final float NEAR = 10f;
     public static final float MED = 50f;
     public static final float FAR = 100f;
+
+    //Size of near and medium boxes for detecting enemy location
+    public static final int ENEMY_NEAR = 2;
+    public static final int ENEMY_MED = 5;
+
 
     // Reward Params
     public static final float HIT_BY_ENEMY = -50;
