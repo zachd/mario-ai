@@ -19,10 +19,8 @@ public class WorldState {
     public boolean stuck;
     public boolean enemies_infront_near;
     public boolean enemies_infront_med;
-    public boolean enemies_infront_far;
     public boolean enemies_behind_near;
     public boolean enemies_behind_med;
-    public boolean enemies_behind_far;
     public int mode;
     public boolean obstacle_infront; //is there an impassible object directly infront of mario
     public int coin_right;
@@ -30,12 +28,15 @@ public class WorldState {
 
     // Private fields can be used for calculation or storage
     private byte[][] levelScene;
+    private byte[][] enemy_level_scene;
     private int[] marioEgoPos;
     private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
     private int obstacle_search_iStart = mario_in_levelScene - 1;
     private int obstacle_search_jStart = mario_in_levelScene - 0;
     private int obstacle_search_iEnd = mario_in_levelScene + 0;
     private int obstacle_search_jEnd = mario_in_levelScene + 1;
+    private int enemy_search_space_start = mario_in_levelScene - Params.ENEMY_MED;
+    private int enemy_search_space_end = mario_in_levelScene + Params.ENEMY_MED;
 
 
     public WorldState(Environment environment, Reward reward) {
@@ -44,9 +45,10 @@ public class WorldState {
         moving_forward = reward.getDirection();
         stuck = reward.isStuck();
         mode = environment.getMarioMode();
-        updateEnemyPosition(environment);
+        //updateEnemyPosition(environment);
         coinReward(environment);
-        //updateObstaclePosition(environment);
+        updateObstaclePosition(environment);
+        updateEnemyObservation(environment);
     }
 
     public void updateObstaclePosition(Environment environment) {
@@ -62,6 +64,36 @@ public class WorldState {
         }
     }
 
+    public void updateEnemyObservation(Environment environment){
+        enemies_infront_near = false;
+        enemies_infront_med = false;
+        enemies_behind_near = false;
+        enemies_behind_med = false;
+
+        enemy_level_scene = environment.getEnemiesObservationZ(2); //level 2 just gives a 1 if a creature is there, 0 if not
+        for(int i=enemy_search_space_start; i<=enemy_search_space_end;i++){
+            for(int j=enemy_search_space_start; j<=enemy_search_space_end; j++){
+                if(enemy_level_scene[i][j] != 0){ //if there is an enemy at i,j
+                    if(j > mario_in_levelScene){ //if the enemy is in front of mario
+                        if((j-mario_in_levelScene) <= Params.ENEMY_NEAR){//if the enemy is near
+                            enemies_infront_near = true;
+                        }
+                        else{
+                            enemies_infront_med = true; //if the enemy is not near it must be in the medium box
+                        }
+                    }
+                    else if(j < mario_in_levelScene){ //if the enemy is behind mario
+                        if((mario_in_levelScene-j <= Params.NEAR)){ //if the enemy is in the near box
+                            enemies_behind_near = true;
+                        }
+                        else{
+                            enemies_behind_med = true;
+                        }
+                    }
+                }
+            }
+        }
+    }
     /**
      * updates enemies_infromt and enemies_behind with the number of enemies on the screen
      * @param environment the current environment
@@ -69,10 +101,10 @@ public class WorldState {
     public void updateEnemyPosition(Environment environment){
         enemies_infront_near = false;
         enemies_infront_med = false;
-        enemies_infront_far = false;
+        boolean enemies_infront_far = false;
         enemies_behind_near = false;
         enemies_behind_med = false;
-        enemies_behind_far = false;
+        boolean enemies_behind_far = false;
 
         float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
         for(int i=0;i<enemies.length; i+=3){
