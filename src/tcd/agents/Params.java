@@ -5,6 +5,7 @@ public class Params {
     public static final float ALPHA = 0.8f;
     public static final float GAMMA = 0.6f;
     public static final int NUMBER_OF_LEARNS = 10000;
+    public static final int NUMBER_OF_MODES = 3;
 
     // Level Seed Params
     public static final int EASY = 0;

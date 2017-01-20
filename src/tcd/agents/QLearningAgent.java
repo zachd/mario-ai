@@ -19,6 +19,7 @@ public class QLearningAgent implements LearningAgent {
     private WorldState state;
     private Reward reward;
     private QTable q_table;
+    private static MarioAIOptions marioAIOptions;
     public QLearningAgent() {
         setName("QLearning Agent");
     }
@@ -33,7 +34,7 @@ public class QLearningAgent implements LearningAgent {
      */
     public static void main(String[] args) {
         // Set up options
-        MarioAIOptions marioAIOptions = new MarioAIOptions(args);
+        marioAIOptions = new MarioAIOptions(args);
         marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
         LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
@@ -70,17 +71,22 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void learn() {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0;
-        for(int i=0; i<Params.NUMBER_OF_LEARNS;i++) {
-            learningTask.runSingleEpisode(1);
-            // Add eval data
-            EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
-            kills += eval.killsTotal;
-            wins += (eval.marioStatus == Mario.STATUS_WIN ? 1 : 0);
-            time += eval.timeSpent;
-            coins += eval.coinsGained;
-            score += eval.computeWeightedFitness();
-            if (i % (Params.NUMBER_OF_LEARNS / 10) == 0)
-                System.out.println("Learning: " + (int) ((float) i / Params.NUMBER_OF_LEARNS * 100) + "%");
+        int progress_counter = 0;
+        for(int j=0; j<Params.NUMBER_OF_MODES;j++) {
+            marioAIOptions.setMarioMode(j);
+            for (int i = 0; i < Params.NUMBER_OF_LEARNS/Params.NUMBER_OF_MODES; i++) {
+                learningTask.runSingleEpisode(1);
+                // Add eval data
+                EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
+                kills += eval.killsTotal;
+                wins += (eval.marioStatus == Mario.STATUS_WIN ? 1 : 0);
+                time += eval.timeSpent;
+                coins += eval.coinsGained;
+                score += eval.computeWeightedFitness();
+                if (progress_counter % (Params.NUMBER_OF_LEARNS / 10) == 0)
+                    System.out.println("Learning: " + (int) ((float) progress_counter / Params.NUMBER_OF_LEARNS * 100) + "%");
+                progress_counter++;
+            }
         }
         System.out.println("\nLEARNING RESULTS");
         System.out.println("# of Wins: " + wins);
