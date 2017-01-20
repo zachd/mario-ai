@@ -80,9 +80,9 @@ public class QLearningAgent implements LearningAgent {
                 EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
                 kills += eval.killsTotal;
                 if (eval.marioStatus == Mario.STATUS_WIN) {
-                    System.out.println("#" + i + " Mario Won! Wins: " + (++wins));
+                    System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
                 } else if (eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0) {
-                    System.out.println("#" + i + " Mario Stuck! Timeouts: " + (++timeouts));
+                    System.out.println("#" + progress_counter + " Mario Stuck! Timeouts: " + (++timeouts));
                 }
                 time += eval.timeSpent;
                 coins += eval.coinsGained;

@@ -51,6 +51,11 @@ public class Reward {
         // Add positive reward for killing an enemy
         killReward(environment);
 
+        // Add large negative reward if Mario dies
+        if(environment.getMarioStatus() == Mario.STATUS_DEAD){
+            updateReward(Params.DEAD);
+        }
+
         // Add large positive reward if Mario has finished
         if(environment.getMarioStatus() == Mario.STATUS_WIN){
             updateReward(Params.FINISH);

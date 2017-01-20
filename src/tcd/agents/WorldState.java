@@ -19,8 +19,8 @@ public class WorldState {
     public boolean stuck;
     public boolean enemies_infront_near;
     public boolean enemies_infront_med;
-    public boolean enemies_behind_near;
-    public boolean enemies_behind_med;
+    //public boolean enemies_behind_near;
+    //public boolean enemies_behind_med;
     public int mode;
     public boolean obstacle_infront; //is there an impassible object directly infront of mario
     public int coin_right;
@@ -42,12 +42,11 @@ public class WorldState {
     public WorldState(Environment environment, Reward reward) {
         on_ground = environment.isMarioOnGround();
         able_to_jump = environment.isMarioAbleToJump();
-        moving_forward = reward.getDirection();
+        //moving_forward = reward.getDirection();
         stuck = reward.isStuck();
         mode = environment.getMarioMode();
-        //updateEnemyPosition(environment);
-        coinReward(environment);
-        updateObstaclePosition(environment);
+        //coinReward(environment);
+        //updateObstaclePosition(environment);
         updateEnemyObservation(environment);
     }
 
@@ -67,8 +66,8 @@ public class WorldState {
     public void updateEnemyObservation(Environment environment){
         enemies_infront_near = false;
         enemies_infront_med = false;
-        enemies_behind_near = false;
-        enemies_behind_med = false;
+        //enemies_behind_near = false;
+        //enemies_behind_med = false;
 
         enemy_level_scene = environment.getEnemiesObservationZ(2); //level 2 just gives a 1 if a creature is there, 0 if not
         for(int i=enemy_search_space_start; i<=enemy_search_space_end;i++){
@@ -82,55 +81,14 @@ public class WorldState {
                             enemies_infront_med = true; //if the enemy is not near it must be in the medium box
                         }
                     }
-                    else if(j < mario_in_levelScene){ //if the enemy is behind mario
+                    /*else if(j < mario_in_levelScene){ //if the enemy is behind mario
                         if((mario_in_levelScene-j <= Params.NEAR)){ //if the enemy is in the near box
                             enemies_behind_near = true;
                         }
                         else{
                             enemies_behind_med = true;
                         }
-                    }
-                }
-            }
-        }
-    }
-    /**
-     * updates enemies_infromt and enemies_behind with the number of enemies on the screen
-     * @param environment the current environment
-     */
-    public void updateEnemyPosition(Environment environment){
-        enemies_infront_near = false;
-        enemies_infront_med = false;
-        boolean enemies_infront_far = false;
-        enemies_behind_near = false;
-        enemies_behind_med = false;
-        boolean enemies_behind_far = false;
-
-        float[] enemies = environment.getEnemiesFloatPos(); //{enemy1_type,enemy1_xpos,enemy1_ypos, enemy2_type,enemy2_xpos..}
-        for(int i=0;i<enemies.length; i+=3){
-            float enemy_xpos = enemies[i+1];
-            float enemy_ypos = enemies[i+2];
-            if(enemy_xpos > 0){
-                if(enemy_xpos <= Params.NEAR && (enemy_ypos <= Params.NEAR || enemy_ypos >= -Params.NEAR)){
-                    enemies_infront_near = true;
-                }
-                else if(enemy_xpos <= Params.MED && (enemy_ypos <= Params.MED || enemy_ypos >=-Params.MED)){
-                    enemies_infront_med = true;
-                }
-                else if(enemy_ypos <= Params.FAR || enemy_ypos >= -Params.FAR){
-                    enemies_infront_far = true;
-                }
-
-            }
-            else if(enemies[i+1] < 0) {
-                if(enemy_xpos <= -Params.NEAR && (enemy_ypos <= Params.NEAR || enemy_ypos >= -Params.NEAR)){
-                    enemies_behind_near = true;
-                }
-                else if(enemy_xpos <= -Params.MED && (enemy_ypos <= Params.MED || enemy_ypos >= -Params.MED)){
-                    enemies_behind_med = true;
-                }
-                else if(enemy_ypos <= Params.FAR || enemy_ypos >= -Params.FAR){
-                    enemies_behind_far = true;
+                    }*/
                 }
             }
         }
