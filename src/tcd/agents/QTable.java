@@ -40,7 +40,7 @@ public class QTable {
         if(prevActionIndex != -1) {
             prevAction = table.get(prevState);
             float oldActionScore = prevAction.getQScore(prevActionIndex) + Params.ALPHA *
-                    (prevReward + (Params.GAMMA * action.getQScore(actionIndex)) - prevAction.getQScore(prevActionIndex));
+                    (reward.getReward() + (Params.GAMMA * action.getQScore(actionIndex)) - prevAction.getQScore(prevActionIndex));
             prevAction.setQScore(prevActionIndex, oldActionScore);
 
             // Debugging parameters
