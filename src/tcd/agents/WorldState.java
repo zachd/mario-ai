@@ -4,6 +4,7 @@ import ch.idsia.benchmark.mario.environments.Environment;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -23,8 +24,16 @@ public class WorldState {
     public boolean enemies_behind_med;
     public boolean enemies_behind_far;
     public int mode;
+    public boolean obstacle_infront; //is there an impassible object directly infront of mario
 
-    // Private fields can be used for calculation
+    // Private fields can be used for calculation or storage
+    private byte[][] levelScene;
+    private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
+    private int obstacle_search_iStart = mario_in_levelScene - 1;
+    private int obstacle_search_jStart = mario_in_levelScene - 0;
+    private int obstacle_search_iEnd = mario_in_levelScene + 0;
+    private int obstacle_search_jEnd = mario_in_levelScene + 1;
+
     private static final float NEAR = 10f;
     private static final float MED = 50f;
     private static final float FAR = 100f;
@@ -36,6 +45,20 @@ public class WorldState {
         stuck = reward.isStuck();
         mode = environment.getMarioMode();
         updateEnemyPosition(environment);
+        //updateObstaclePosition(environment);
+    }
+
+    public void updateObstaclePosition(Environment environment) {
+        obstacle_infront = false;
+        levelScene = environment.getLevelSceneObservationZ(2);
+        for (int i = mario_in_levelScene-1; i<= mario_in_levelScene; i++) {
+            for (int j = mario_in_levelScene+1; j<= mario_in_levelScene+1; j++) {
+                if((levelScene[i][j] != 0 && levelScene[i][j] != 2 )) {
+                    obstacle_infront = true;
+                }
+
+            }
+        }
     }
 
     /**
