@@ -47,7 +47,7 @@ public class QLearningAgent implements LearningAgent {
         agent.learn();
 
         // Gameplay task
-        learning_complete = true;
+        //learning_complete = true;
         System.out.println("GAMEPLAY STATE");
         marioAIOptions.setVisualization(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);

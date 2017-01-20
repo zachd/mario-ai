@@ -66,7 +66,7 @@ public class Action {
      */
     public int getBestAction() {
         ArrayList<Integer> bestActionList = new ArrayList();//an array list that stores the indexes of the actions with the highest qscore
-        float bestScore = Integer.MIN_VALUE;
+        float bestScore = Float.NEGATIVE_INFINITY;
 
         //get the best qScore in the list of qScores
         for(int i = 0; i< qScore.length; i++) {
