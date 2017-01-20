@@ -14,8 +14,7 @@ public class Reward {
     private int last_distance_travelled;
     private int last_enemies_collided;
     private int last_enemies_killed;
-
-    private byte[][] levelScene;
+    private int prev_coins_collected;
 
     /**
      * Constructor for Reward class
@@ -27,6 +26,7 @@ public class Reward {
         last_distance_travelled = 0;
         last_enemies_collided = 0;
         last_enemies_killed = 0;
+        prev_coins_collected = 0;
     }
 
     /**
@@ -45,38 +45,16 @@ public class Reward {
         // Add negative reward if Mario collides with enemy
         enemyHitReward(environment);
 
-        //senseImmediateEnvironment(environment);
+        // Add positive reward for collecting coin
+        coinReward(environment);
 
         // Add positive reward for killing an enemy
-        //killReward(environment);
+        killReward(environment);
 
         // Add large positive reward if Mario has finished
         if(environment.getMarioStatus() == Mario.STATUS_WIN){
             updateReward(Params.FINISH);
         }
-    }
-
-    public void senseImmediateEnvironment(Environment environment) {
-        levelScene = environment.getLevelSceneObservationZ(2);
-        for (int i=0; i<levelScene[0].length; i++) {
-            for (int j=0; j<levelScene[1].length; j++) {
-                if ((levelScene[i][j] == 2)) {
-                    //System.out.println("COIN! @ " + i + " and " + j);
-                }
-            }
-        }
-//        System.out.println(environment.getMarioFloatPos()[0]);
-//        System.out.println(environment.getMarioFloatPos()[1]);
-//        if (getReceptiveFieldCellValue((int)environment.getMarioFloatPos()[0], (int)environment.getMarioFloatPos()[1]) == 2) {
-//            System.out.println("COIN");
-//        }
-    }
-
-    public int getReceptiveFieldCellValue(int x, int y)
-    {
-        if (x < 0 || x >= levelScene.length || y < 0 || y >= levelScene[0].length)
-            return 0;
-        return levelScene[x][y];
     }
 
     /**
@@ -137,6 +115,20 @@ public class Reward {
             last_enemies_killed = env.getKillsTotal();
         }
     }
+
+    /**
+     * Positive reward for collecting coins
+     * @param environment
+     */
+    public void coinReward(Environment environment) {
+        EvaluationInfo coinCollected = environment.getEvaluationInfo();
+        int coins = coinCollected.coinsGained;
+        if (coins > prev_coins_collected) {
+            updateReward(Params.COIN);
+            prev_coins_collected = coins;
+        }
+    }
+
     /**
      * Updates the reward variable at any one episode
      * @param reward
