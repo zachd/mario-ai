@@ -2,7 +2,7 @@ package tcd.agents;
 
 public class Params {
     // Learning Params
-    public static final float ALPHA = 0.8f;
+    public static final float ALPHA = 0.6f;
     public static final float GAMMA = 0.6f;
     public static final int NUMBER_OF_LEARNS = 1000;
     public static final int NUMBER_OF_MODES = 3;

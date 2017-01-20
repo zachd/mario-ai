@@ -73,7 +73,7 @@ public class QLearningAgent implements LearningAgent {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         int progress_counter = 0;
         for(int j=0; j<Params.NUMBER_OF_MODES;j++) {
-            marioAIOptions.setMarioMode(j);
+            //marioAIOptions.setMarioMode(j);
             for (int i = 0; i < Params.NUMBER_OF_LEARNS/Params.NUMBER_OF_MODES; i++) {
                 learningTask.runSingleEpisode(1);
                 // Add eval data
