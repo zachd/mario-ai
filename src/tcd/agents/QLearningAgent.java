@@ -69,13 +69,17 @@ public class QLearningAgent implements LearningAgent {
      */
     @Override
     public void learn() {
-        int kills = 0, wins = 0, time = 0, coins = 0, score = 0;
+        int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         for(int i=0; i<Params.NUMBER_OF_LEARNS;i++) {
             learningTask.runSingleEpisode(1);
             // Add eval data
             EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
             kills += eval.killsTotal;
-            wins += (eval.marioStatus == Mario.STATUS_WIN ? 1 : 0);
+            if(eval.marioStatus == Mario.STATUS_WIN){
+                System.out.println("#" + i + " Mario Won! Wins: " + (++wins));
+            } else if(eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0){
+                System.out.println("#" + i + " Mario Stuck! Timeouts: " + (++timeouts));
+            }
             time += eval.timeSpent;
             coins += eval.coinsGained;
             score += eval.computeWeightedFitness();
@@ -83,7 +87,7 @@ public class QLearningAgent implements LearningAgent {
                 System.out.println("Learning: " + (int) ((float) i / Params.NUMBER_OF_LEARNS * 100) + "%");
         }
         System.out.println("\nLEARNING RESULTS");
-        System.out.println("# of Wins: " + wins);
+        System.out.println("# Level Wins: " + wins + " | # Timeouts: " + timeouts);
         System.out.println("Avg Kills: " + (float)kills/Params.NUMBER_OF_LEARNS + " | Avg Time: " +
                 (float)time/Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float)coins/Params.NUMBER_OF_LEARNS +
                 " | Avg Score: " + (float)score/Params.NUMBER_OF_LEARNS + "\n");
