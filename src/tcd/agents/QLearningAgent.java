@@ -9,9 +9,6 @@ import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 
-import java.util.Arrays;
-import java.util.logging.Logger;
-
 public class QLearningAgent implements LearningAgent {
 
     private String name;
@@ -26,7 +23,7 @@ public class QLearningAgent implements LearningAgent {
 
 
     public static boolean game_started = false;
-    public static boolean learning_complete = false;
+    public static boolean show_debug = false;
 
     /**
      * Main task to test the Q-Learning Agent
@@ -48,8 +45,8 @@ public class QLearningAgent implements LearningAgent {
         agent.learn();
 
         // Gameplay task
-        //learning_complete = true;
         System.out.println("GAMEPLAY STATE");
+        show_debug = Params.SHOW_GAMEPLAY_DEBUG;
         marioAIOptions.setVisualization(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);
         basicTask.setOptionsAndReset(marioAIOptions);
@@ -72,9 +69,9 @@ public class QLearningAgent implements LearningAgent {
     public void learn() {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         int progress_counter = 0;
-        for(int j=0; j<Params.NUMBER_OF_MODES;j++) {
+        for (int j = 0; j < Params.NUMBER_OF_MODES; j++) {
             //marioAIOptions.setMarioMode(j);
-            for (int i = 0; i < Params.NUMBER_OF_LEARNS/Params.NUMBER_OF_MODES; i++) {
+            for (int i = 0; i < Params.NUMBER_OF_LEARNS / Params.NUMBER_OF_MODES; i++) {
                 learningTask.runSingleEpisode(1);
                 // Add eval data
                 EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
@@ -94,11 +91,12 @@ public class QLearningAgent implements LearningAgent {
         }
         System.out.println("\nLEARNING RESULTS");
         System.out.println("# Level Wins: " + wins + " | # Timeouts: " + timeouts);
-        System.out.println("Avg Kills: " + (float)kills/Params.NUMBER_OF_LEARNS + " | Avg Time: " +
-                (float)time/Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float)coins/Params.NUMBER_OF_LEARNS +
-                " | Avg Score: " + (float)score/Params.NUMBER_OF_LEARNS + "\n");
+        System.out.println("Avg Kills: " + (float) kills / Params.NUMBER_OF_LEARNS + " | Avg Time: " +
+                (float) time / Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float) coins / Params.NUMBER_OF_LEARNS +
+                " | Avg Score: " + (float) score / Params.NUMBER_OF_LEARNS + "\n");
+        if(Params.PRINT_TO_FILE)
+            q_table.printToFile();
     }
-
     /**
      * Called every tick while a game is running
      * @param environment Current game environment

@@ -3,6 +3,7 @@ package tcd.agents;
 import ch.idsia.benchmark.mario.engine.sprites.Mario;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 /**
@@ -97,5 +98,14 @@ public class Action {
             marioAction[action] = true;
         }
         return marioAction;
+    }
+
+    /**
+     * Returns a String representation
+     * @return String
+     */
+    @Override
+    public String toString() {
+        return Arrays.toString(qScore);
     }
 }

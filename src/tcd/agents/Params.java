@@ -6,11 +6,13 @@ public class Params {
     public static final float GAMMA = 0.6f;
     public static final int NUMBER_OF_LEARNS = 1000;
     public static final int NUMBER_OF_MODES = 3;
+    public static final boolean PRINT_TO_FILE = true;
+    public static final boolean SHOW_GAMEPLAY_DEBUG = true;
 
     // Level Seed Params
     public static final int EASY = 0;
     public static final int HARD = 48;
-    public static final int LEVEL_SEED = EASY;
+    public static final int LEVEL_SEED = HARD;
 
     // Agent State Params
     public static final float NEAR = 10f;

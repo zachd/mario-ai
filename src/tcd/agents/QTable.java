@@ -1,12 +1,15 @@
 package tcd.agents;
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.HashMap;
 
 public class QTable {
 
-    private HashMap<WorldState, Action> table;
+    public HashMap<WorldState, Action> table;
 
     public int prevActionIndex = -1;
     public WorldState prevState;
@@ -44,7 +47,7 @@ public class QTable {
             prevAction.setQScore(prevActionIndex, oldActionScore);
 
             // Debugging parameters
-            if(QLearningAgent.learning_complete) {
+            if(QLearningAgent.show_debug) {
                 System.out.println("\u23BE Current State: " + state);
                 System.out.println("\u23B9 Prev action: Mario." + prevAction.action_terms[prevActionIndex]
                         + " (Q: " + prevAction.qScore[prevActionIndex] + ")");
@@ -75,5 +78,21 @@ public class QTable {
      */
     public int getNewActionIndex(){
         return actionIndex;
+    }
+
+    /**
+     * Print to QTable to file
+     */
+    public void printToFile() {
+        PrintWriter out = null;
+        try {
+            out = new PrintWriter(new File("qtable.txt"));
+        } catch (FileNotFoundException e) {}
+        out.println("Actions: " + Arrays.toString(Action.action_terms));
+        out.println("\nQ Table:");
+        for (HashMap.Entry<WorldState,Action> entry : table.entrySet()) {
+            out.println(entry.getKey() + "\t=>\t" + entry.getValue());
+        }
+        out.close();
     }
 }
