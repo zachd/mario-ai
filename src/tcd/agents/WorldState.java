@@ -41,8 +41,8 @@ public class WorldState {
 
     public WorldState(Environment environment, Reward reward) {
         on_ground = environment.isMarioOnGround();
-        able_to_jump = environment.isMarioAbleToJump();
-        //moving_forward = reward.getDirection();
+        able_to_jump = on_ground && environment.isMarioAbleToJump();
+        moving_forward = reward.getDirection();
         stuck = reward.isStuck();
         mode = environment.getMarioMode();
         //coinReward(environment);
