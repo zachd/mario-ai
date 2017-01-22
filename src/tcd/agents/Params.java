@@ -15,14 +15,11 @@ public class Params {
     public static final int HARDER = 99;
     public static final int LEVEL_SEED = HARD;
 
-    // Agent State Params
-    public static final float NEAR = 10f;
-    public static final float MED = 50f;
-    public static final float FAR = 100f;
 
     //Size of near and medium boxes for detecting enemy location
-    public static final int ENEMY_NEAR = 1;
-    public static final int ENEMY_MED = 3;
+    public static final int ENEMY_NEAR = 2;
+    public static final int ENEMY_MED = 4;
+    public static final int ENEMY_FAR = 7;
 
 
     // Reward Params

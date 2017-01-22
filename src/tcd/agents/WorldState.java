@@ -32,6 +32,9 @@ public class WorldState {
     public boolean enemy_location_med_above;
     public boolean enemy_location_med_level;
     public boolean enemy_location_med_below;
+    public boolean enemy_location_far_above;
+    public boolean enemy_location_far_level;
+    public boolean enemy_location_far_below;
 
     public boolean obstacle_location_near_above;
     public boolean obstacle_location_near_level;
@@ -39,14 +42,17 @@ public class WorldState {
     public boolean obstacle_location_med_above;
     public boolean obstacle_location_med_level;
     public boolean obstacle_location_med_below;
+    public boolean obstacle_location_far_above;
+    public boolean obstacle_location_far_level;
+    public boolean obstacle_location_far_below;
 
     // Private fields can be used for calculation or storage
     private byte[][] levelScene;
     private byte[][] enemy_level_scene;
     private int[] marioEgoPos;
     private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
-    private int search_space_start = mario_in_levelScene - Params.ENEMY_MED;
-    private int search_space_end = mario_in_levelScene + Params.ENEMY_MED;
+    private int search_space_start = mario_in_levelScene - Params.ENEMY_FAR;
+    private int search_space_end = mario_in_levelScene + Params.ENEMY_FAR;
 
     public WorldState(Environment env, Reward reward) {
         on_ground = env.isMarioOnGround();
@@ -67,6 +73,7 @@ public class WorldState {
         }
     }
 
+    @SuppressWarnings("Duplicates")
     public void updateEnemyObservation(Environment environment) {
         enemy_location_near_above = false;
         enemy_location_near_level = false;
@@ -76,6 +83,10 @@ public class WorldState {
         enemy_location_med_level = false;
         enemy_location_med_below = false;
 
+        enemy_location_far_above = false;
+        enemy_location_far_level = false;
+        enemy_location_far_below = false;
+
         enemy_level_scene = environment.getEnemiesObservationZ(2); //level 2 just gives a 1 if a creature is there, 0 if not
         for (int i = search_space_start; i <= search_space_end; i++) {
             for (int j = mario_in_levelScene + 1; j <= search_space_end; j++) {
@@ -84,20 +95,29 @@ public class WorldState {
                         if (i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE) { //if the enemy is above mario
                             if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
                                 enemy_location_near_above = true;
-                            } else { //enemy must be medium distance away if it is not near
+                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
                                 enemy_location_med_above = true;
+                            }
+                            else{ //enemy must be far distance away if it is not medium or far
+                                enemy_location_far_above = true;
                             }
                         } else if (i == mario_in_levelScene) { //if the enemy is level with mario
                             if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
                                 enemy_location_near_level = true;
-                            } else {
+                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
                                 enemy_location_med_level = true;
+                            }
+                            else {
+                                enemy_location_far_level = true;
                             }
                         } else if (i == mario_in_levelScene + Params.BELOW_MARIO_SIZE) { //if the enemy is below
                             if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
                                 enemy_location_near_below = true;
-                            } else {
+                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
                                 enemy_location_med_below = true;
+                            }
+                            else{
+                                enemy_location_far_below = true;
                             }
                         }
                     }
