@@ -115,9 +115,9 @@ public class Reward {
      * @param env the enviroment
      */
     public void killReward(Environment env){
-        if(env.getKillsTotal() > last_enemies_killed){
+        if(env.getKillsByStomp() > last_enemies_killed){
             updateReward(Params.KILL);
-            last_enemies_killed = env.getKillsTotal();
+            last_enemies_killed = env.getKillsByStomp();
         }
     }
 
