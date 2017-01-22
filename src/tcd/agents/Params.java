@@ -7,7 +7,7 @@ public class Params {
     public static final int NUMBER_OF_LEARNS = 1000;
     public static final int NUMBER_OF_MODES = 3;
     public static final boolean PRINT_TO_FILE = true;
-    public static final boolean SHOW_GAMEPLAY_DEBUG = true;
+    public static final boolean SHOW_GAMEPLAY_DEBUG = false;
 
     // Level Seed Params
     public static final int EASY = 0;
@@ -17,9 +17,9 @@ public class Params {
 
 
     //Size of near and medium boxes for detecting enemy location
-    public static final int ENEMY_NEAR = 2;
-    public static final int ENEMY_MED = 4;
-    public static final int ENEMY_FAR = 7;
+    public static final int ENEMY_NEAR = 1;
+    public static final int ENEMY_MED = 3;
+    public static final int ENEMY_FAR = 6;
 
 
     // Reward Params

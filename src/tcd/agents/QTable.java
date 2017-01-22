@@ -51,7 +51,7 @@ public class QTable {
                 System.out.println("\u23BE Current State: " + state);
                 System.out.println("\u23B9 Prev action: Mario." + prevAction.action_terms[prevActionIndex]
                         + " (Q: " + prevAction.qScore[prevActionIndex] + ")");
-                System.out.println("\u23B9 Prev Reward: " + prevReward);
+                System.out.println("\u23B9 Reward for prev: " + reward.getReward());
                 System.out.println("\u23B9 Next Max Action: " + action.action_terms[actionIndex]
                         + " (Q: " + action.qScore[actionIndex] + ")");
                 System.out.println("\u23BF Q Scores: " + Arrays.toString(action.qScore));
