@@ -11,7 +11,6 @@ import java.util.Objects;
  * This object will hold the state of the mario world.
  */
 public class WorldState {
-
     // Public fields are included in WorldState equals/hashCode
     public boolean on_ground;
     public boolean able_to_jump;
@@ -21,7 +20,6 @@ public class WorldState {
     public int mode;
     public int coin_right;
     public int coin_left;
-
 
     public boolean enemy_location_near_above;
     public boolean enemy_location_near_level;
@@ -37,9 +35,6 @@ public class WorldState {
     public boolean obstacle_location_med_level;
     public boolean obstacle_location_med_below;
 
-
-
-
     // Private fields can be used for calculation or storage
     private byte[][] levelScene;
     private byte[][] enemy_level_scene;
@@ -48,15 +43,13 @@ public class WorldState {
     private int search_space_start = mario_in_levelScene - Params.ENEMY_MED;
     private int search_space_end = mario_in_levelScene + Params.ENEMY_MED;
 
-
-
     public WorldState(Environment env, Reward reward) {
         on_ground = env.isMarioOnGround();
         able_to_jump = on_ground && env.isMarioAbleToJump();
         moving_forward = reward.getDirection();
         stuck = reward.isStuck();
         mode = env.getMarioMode();
-        coinReward(env);
+        updateCoinsNearby(env);
         updateObstaclePosition(env);
         updateEnemyObservation(env);
         //old_updateEnemyObservation(environment);
@@ -68,7 +61,6 @@ public class WorldState {
             //System.out.println("en med:" + Arrays.toString(obstacle_location_med));
         }
     }
-
 
     public void updateEnemyObservation(Environment environment) {
         enemy_location_near_above = false;
@@ -154,7 +146,7 @@ public class WorldState {
         }
     }
 
-    public void coinReward(Environment environment) {
+    public void updateCoinsNearby(Environment environment) {
         coin_right = 0;
         coin_left = 0;
         levelScene = environment.getLevelSceneObservationZ(2);
@@ -163,7 +155,7 @@ public class WorldState {
                 ((getCellInformation(marioEgoPos[1] + 1, marioEgoPos[0] - 1) == 2)) ||
                 ((getCellInformation(marioEgoPos[1] + 1, marioEgoPos[0] + 1) == 2))) {
             coin_right++;
-        } else if ((getCellInformation(marioEgoPos[1] -1, marioEgoPos[0]) == 2) ||
+        } else if ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0]) == 2) ||
                 ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0] - 1) == 2)) ||
                 ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0] + 1) == 2 ))) {
             coin_left++;
