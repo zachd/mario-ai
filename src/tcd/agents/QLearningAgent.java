@@ -13,7 +13,6 @@ public class QLearningAgent implements LearningAgent {
 
     private String name;
     private static LearningTask learningTask;
-    private WorldState state;
     private Reward reward;
     private QTable q_table;
     private static MarioAIOptions marioAIOptions;
@@ -132,7 +131,6 @@ public class QLearningAgent implements LearningAgent {
             return (new Action()).toMarioAction(action_index);
         }
     }
-
 
     @Override
     public Agent getBestAgent() {

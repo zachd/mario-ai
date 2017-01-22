@@ -18,8 +18,13 @@ public class WorldState {
     public boolean stuck;
     public int enemies_killed_stomp;
     public int mode;
-    public int coin_right;
-    public int coin_left;
+
+    public boolean coin_right_above;
+    public boolean coin_right_level;
+    public boolean coin_right_below;
+    public boolean coin_left_above;
+    public boolean coin_left_level;
+    public boolean coin_left_below;
 
     public boolean enemy_location_near_above;
     public boolean enemy_location_near_level;
@@ -147,18 +152,54 @@ public class WorldState {
     }
 
     public void updateCoinsNearby(Environment environment) {
-        coin_right = 0;
-        coin_left = 0;
+        coin_right_above = false;
+        coin_right_level = false;
+        coin_right_below = false;
+        coin_left_above = false;
+        coin_left_level = false;
+        coin_left_below = false;
+
         levelScene = environment.getLevelSceneObservationZ(2);
-        marioEgoPos =  environment.getMarioEgoPos();
-        if ((getCellInformation(marioEgoPos[1] + 1, marioEgoPos[0]) == 2) ||
-                ((getCellInformation(marioEgoPos[1] + 1, marioEgoPos[0] - 1) == 2)) ||
-                ((getCellInformation(marioEgoPos[1] + 1, marioEgoPos[0] + 1) == 2))) {
-            coin_right++;
-        } else if ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0]) == 2) ||
-                ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0] - 1) == 2)) ||
-                ((getCellInformation(marioEgoPos[1] - 1, marioEgoPos[0] + 1) == 2 ))) {
-            coin_left++;
+
+        for (int i = search_space_start; i<= search_space_end; i++) {
+            for (int j = mario_in_levelScene + 1; j<= search_space_end; j++) {
+                if (levelScene[i][j] == 2) { // if the block is not a coin or nothing
+                    if (j > mario_in_levelScene) {// the obstacle is in front of mario
+                        if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // obstacle above mario
+                            if (j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_right_above = true;
+                            }
+                        }
+                        else if(i == mario_in_levelScene){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_right_level = true;
+                            }
+                        }
+                        else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_right_below = true;
+                            }
+                        }
+                    } else if (j < mario_in_levelScene) {
+                        if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // obstacle above mario
+                            if (j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_left_above = true;
+                            }
+                        }
+                        else if(i == mario_in_levelScene){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_left_level = true;
+                            }
+                        }
+                        else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                coin_left_below = true;
+                            }
+                        }
+                    }
+                }
+
+            }
         }
     }
 

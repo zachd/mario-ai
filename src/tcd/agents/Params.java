@@ -33,11 +33,11 @@ public class Params {
     public static final float DEAD = -500;
     public static final float STUCK = -10;
     public static final float KILL = 20;
-    public static final float COIN = 5;
+    public static final float COIN = 15;
 
     // Reward Calc Params
     public static final int STUCK_THRESHOLD = 10;
     public static final int STUCK_WINDOW = 3;
     public static final int ABOVE_MARIO_SIZE = 1; //used for calculating enemy positions
-    public static final int BELOW_MARIO_SIZE = 1;//used for calculating enemy positions
+    public static final int BELOW_MARIO_SIZE = 1; //used for calculating enemy positions
 }
