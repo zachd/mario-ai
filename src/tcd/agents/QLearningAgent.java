@@ -35,6 +35,7 @@ public class QLearningAgent implements LearningAgent {
         marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
         LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
+        //marioAIOptions.setLevelType(0);
 
         // Learning task
         learningTask = new LearningTask(marioAIOptions);

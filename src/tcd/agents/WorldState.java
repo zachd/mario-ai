@@ -17,6 +17,7 @@ public class WorldState {
     public boolean able_to_jump;
     public boolean moving_forward;
     public boolean stuck;
+    public int enemies_killed_stomp;
     public int mode;
     public int coin_right;
     public int coin_left;
@@ -49,16 +50,17 @@ public class WorldState {
 
 
 
-    public WorldState(Environment environment, Reward reward) {
-        on_ground = environment.isMarioOnGround();
-        able_to_jump = on_ground && environment.isMarioAbleToJump();
+    public WorldState(Environment env, Reward reward) {
+        on_ground = env.isMarioOnGround();
+        able_to_jump = on_ground && env.isMarioAbleToJump();
         moving_forward = reward.getDirection();
         stuck = reward.isStuck();
-        mode = environment.getMarioMode();
-        //coinReward(environment);
-        updateObstaclePosition(environment);
-        updateEnemyObservation(environment);
+        mode = env.getMarioMode();
+        coinReward(env);
+        updateObstaclePosition(env);
+        updateEnemyObservation(env);
         //old_updateEnemyObservation(environment);
+        enemies_killed_stomp = reward.getEnemiesKilled();
         if(QLearningAgent.show_debug) {
             System.out.println("en near:" + enemy_location_near_above + ", "+enemy_location_near_level + ", "+enemy_location_near_below);
             System.out.println("en med:" + enemy_location_med_above + ", "+enemy_location_med_level + ", "+enemy_location_med_below);

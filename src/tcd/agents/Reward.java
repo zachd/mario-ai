@@ -12,9 +12,10 @@ public class Reward {
     private boolean stuck;
     private boolean moving_forward;
     private int last_distance_travelled;
+    private int prev_coins_collected;
+    private int enemies_killed_stomp;
     private int last_enemies_collided;
     private int last_enemies_killed;
-    private int prev_coins_collected;
 
     /**
      * Constructor for Reward class
@@ -70,8 +71,8 @@ public class Reward {
         EvaluationInfo evalInfo = env.getEvaluationInfo();
         if (evalInfo.collisionsWithCreatures > last_enemies_collided) {
             updateReward(Params.HIT_BY_ENEMY);
-            last_enemies_collided = evalInfo.collisionsWithCreatures;
         }
+        last_enemies_collided = evalInfo.collisionsWithCreatures;
     }
 
     /**
@@ -117,8 +118,9 @@ public class Reward {
     public void killReward(Environment env){
         if(env.getKillsByStomp() > last_enemies_killed){
             updateReward(Params.KILL);
-            last_enemies_killed = env.getKillsByStomp();
         }
+        enemies_killed_stomp = env.getKillsByStomp() - last_enemies_killed;
+        last_enemies_killed = env.getKillsByStomp();
     }
 
     /**
@@ -126,12 +128,11 @@ public class Reward {
      * @param environment
      */
     public void coinReward(Environment environment) {
-        EvaluationInfo coinCollected = environment.getEvaluationInfo();
-        int coins = coinCollected.coinsGained;
-        if (coins > prev_coins_collected) {
+        EvaluationInfo eval = environment.getEvaluationInfo();
+        if (eval.coinsGained > prev_coins_collected) {
             updateReward(Params.COIN);
-            prev_coins_collected = coins;
         }
+        prev_coins_collected = eval.coinsGained;
     }
 
     /**
@@ -164,5 +165,13 @@ public class Reward {
      */
     public boolean getDirection(){
         return moving_forward;
+    }
+
+    /**
+     * Return enemies killed by stomp
+     * @return int of enemies killed
+     */
+    public int getEnemiesKilled(){
+        return enemies_killed_stomp;
     }
 }
