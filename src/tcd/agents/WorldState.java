@@ -17,26 +17,36 @@ public class WorldState {
     public boolean able_to_jump;
     public boolean moving_forward;
     public boolean stuck;
-    public boolean enemies_infront_near;
-    public boolean enemies_infront_med;
-    //public boolean enemies_behind_near;
-    //public boolean enemies_behind_med;
     public int mode;
-    public boolean obstacle_infront; //is there an impassible object directly infront of mario
     public int coin_right;
     public int coin_left;
+
+
+    public boolean enemy_location_near_above;
+    public boolean enemy_location_near_level;
+    public boolean enemy_location_near_below;
+    public boolean enemy_location_med_above;
+    public boolean enemy_location_med_level;
+    public boolean enemy_location_med_below;
+
+    public boolean obstacle_location_near_above;
+    public boolean obstacle_location_near_level;
+    public boolean obstacle_location_near_below;
+    public boolean obstacle_location_med_above;
+    public boolean obstacle_location_med_level;
+    public boolean obstacle_location_med_below;
+
+
+
 
     // Private fields can be used for calculation or storage
     private byte[][] levelScene;
     private byte[][] enemy_level_scene;
     private int[] marioEgoPos;
     private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
-    private int obstacle_search_iStart = mario_in_levelScene - 1;
-    private int obstacle_search_jStart = mario_in_levelScene - 0;
-    private int obstacle_search_iEnd = mario_in_levelScene + 0;
-    private int obstacle_search_jEnd = mario_in_levelScene + 1;
-    private int enemy_search_space_start = mario_in_levelScene - Params.ENEMY_MED;
-    private int enemy_search_space_end = mario_in_levelScene + Params.ENEMY_MED;
+    private int search_space_start = mario_in_levelScene - Params.ENEMY_MED;
+    private int search_space_end = mario_in_levelScene + Params.ENEMY_MED;
+
 
 
     public WorldState(Environment environment, Reward reward) {
@@ -46,50 +56,98 @@ public class WorldState {
         stuck = reward.isStuck();
         mode = environment.getMarioMode();
         //coinReward(environment);
-        //updateObstaclePosition(environment);
+        updateObstaclePosition(environment);
         updateEnemyObservation(environment);
+        //old_updateEnemyObservation(environment);
+        if(QLearningAgent.show_debug) {
+            System.out.println("en near:" + enemy_location_near_above + ", "+enemy_location_near_level + ", "+enemy_location_near_below);
+            System.out.println("en med:" + enemy_location_med_above + ", "+enemy_location_med_level + ", "+enemy_location_med_below);
+            //System.out.println("ob near:" + Arrays.toString(obstacle_location_near));
+            //System.out.println("en med:" + Arrays.toString(obstacle_location_med));
+        }
     }
 
-    public void updateObstaclePosition(Environment environment) {
-        obstacle_infront = false;
-        levelScene = environment.getLevelSceneObservationZ(2);
-        for (int i = mario_in_levelScene-1; i<= mario_in_levelScene; i++) {
-            for (int j = mario_in_levelScene+1; j<= mario_in_levelScene+1; j++) {
-                if((levelScene[i][j] != 0 && levelScene[i][j] != 2 )) {
-                    obstacle_infront = true;
-                }
 
+    public void updateEnemyObservation(Environment environment) {
+        enemy_location_near_above = false;
+        enemy_location_near_level = false;
+        enemy_location_near_below = false;
+
+        enemy_location_med_above = false;
+        enemy_location_med_level = false;
+        enemy_location_med_below = false;
+
+        enemy_level_scene = environment.getEnemiesObservationZ(2); //level 2 just gives a 1 if a creature is there, 0 if not
+        for (int i = search_space_start; i <= search_space_end; i++) {
+            for (int j = mario_in_levelScene + 1; j <= search_space_end; j++) {
+                if (enemy_level_scene[i][j] != 0) { //if there is an enemy at i,j
+                    if (j > mario_in_levelScene) { //if the enemy is in front of mario
+                        if (i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE) { //if the enemy is above mario
+                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                                enemy_location_near_above = true;
+                            } else { //enemy must be medium distance away if it is not near
+                                enemy_location_med_above = true;
+                            }
+                        } else if (i == mario_in_levelScene) { //if the enemy is level with mario
+                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                                enemy_location_near_level = true;
+                            } else {
+                                enemy_location_med_level = true;
+                            }
+                        } else if (i == mario_in_levelScene + Params.BELOW_MARIO_SIZE) { //if the enemy is below
+                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                                enemy_location_near_below = true;
+                            } else {
+                                enemy_location_med_below = true;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    public void updateEnemyObservation(Environment environment){
-        enemies_infront_near = false;
-        enemies_infront_med = false;
-        //enemies_behind_near = false;
-        //enemies_behind_med = false;
+    public void updateObstaclePosition(Environment environment) {
+        obstacle_location_near_above = false;
+        obstacle_location_near_level = false;
+        obstacle_location_near_below = false;
 
-        enemy_level_scene = environment.getEnemiesObservationZ(2); //level 2 just gives a 1 if a creature is there, 0 if not
-        for(int i=enemy_search_space_start; i<=enemy_search_space_end;i++){
-            for(int j=enemy_search_space_start; j<=enemy_search_space_end; j++){
-                if(enemy_level_scene[i][j] != 0){ //if there is an enemy at i,j
-                    if(j > mario_in_levelScene){ //if the enemy is in front of mario
-                        if((j-mario_in_levelScene) <= Params.ENEMY_NEAR){//if the enemy is near
-                            enemies_infront_near = true;
+        obstacle_location_med_above = false;
+        obstacle_location_med_level = false;
+        obstacle_location_med_below = false;
+
+        levelScene = environment.getLevelSceneObservationZ(2);
+        for (int i = search_space_start; i<= search_space_end; i++) {
+            for (int j = mario_in_levelScene + 1; j<= search_space_end; j++) {
+                if((levelScene[i][j] != 0 && levelScene[i][j] != 2 )) { //if the block is not a coin or nothing
+                    if(j > mario_in_levelScene){//the obstacle is infront of mario
+                        if(i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ //obstale above mario
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                obstacle_location_near_above = true;
+                            }
+                            else{
+                                obstacle_location_med_above = true;
+                            }
                         }
-                        else{
-                            enemies_infront_med = true; //if the enemy is not near it must be in the medium box
+                        else if(i == mario_in_levelScene){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                obstacle_location_near_level = true;
+                            }
+                            else{
+                                obstacle_location_med_level = true;
+                            }
+                        }
+                        else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
+                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                                obstacle_location_near_below = true;
+                            }
+                            else{
+                                obstacle_location_med_below = true;
+                            }
                         }
                     }
-                    /*else if(j < mario_in_levelScene){ //if the enemy is behind mario
-                        if((mario_in_levelScene-j <= Params.NEAR)){ //if the enemy is in the near box
-                            enemies_behind_near = true;
-                        }
-                        else{
-                            enemies_behind_med = true;
-                        }
-                    }*/
                 }
+
             }
         }
     }

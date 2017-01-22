@@ -22,7 +22,7 @@ public class Params {
 
     //Size of near and medium boxes for detecting enemy location
     public static final int ENEMY_NEAR = 2;
-    public static final int ENEMY_MED = 3;
+    public static final int ENEMY_MED = 5;
 
 
     // Reward Params
@@ -38,4 +38,6 @@ public class Params {
     // Reward Calc Params
     public static final int STUCK_THRESHOLD = 10;
     public static final int STUCK_WINDOW = 3;
+    public static final int ABOVE_MARIO_SIZE = 1; //used for calculating enemy positions
+    public static final int BELOW_MARIO_SIZE = 1;//used for calculating enemy positions
 }
