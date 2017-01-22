@@ -49,7 +49,6 @@ public class WorldState {
     // Private fields can be used for calculation or storage
     private byte[][] levelScene;
     private byte[][] enemy_level_scene;
-    private int[] marioEgoPos;
     private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
     private int search_space_start = mario_in_levelScene - Params.ENEMY_FAR;
     private int search_space_end = mario_in_levelScene + Params.ENEMY_FAR;
@@ -63,7 +62,6 @@ public class WorldState {
         updateCoinsNearby(env);
         updateObstaclePosition(env);
         updateEnemyObservation(env);
-        //old_updateEnemyObservation(environment);
         enemies_killed_stomp = reward.getEnemiesKilled();
         if(QLearningAgent.show_debug) {
             System.out.println("en near:" + enemy_location_near_above + ", "+enemy_location_near_level + ", "+enemy_location_near_below);
@@ -221,10 +219,6 @@ public class WorldState {
 
             }
         }
-    }
-
-    public int getCellInformation(int x, int y) {
-        return levelScene[x][y];
     }
 
     /**
