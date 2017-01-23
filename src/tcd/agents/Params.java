@@ -2,9 +2,9 @@ package tcd.agents;
 
 public class Params {
     // Learning Params
-    public static final float ALPHA = 0.6f;
+    public static final float ALPHA = 0.7f;
     public static final float GAMMA = 0.6f;
-    public static final int NUMBER_OF_LEARNS = 10000;
+    public static final int NUMBER_OF_LEARNS = 1000;
     public static final boolean PRINT_TO_FILE = true;
     public static final boolean SHOW_GAMEPLAY_DEBUG = false;
 
@@ -12,7 +12,7 @@ public class Params {
     public static final int EASY = 0;
     public static final int HARD = 48;
     public static final int HARDER = 99;
-    public static final int LEVEL_SEED = HARDER;
+    public static final int LEVEL_SEED = EASY;
 
 
     // Size of near and medium boxes for detecting enemy location and obstacles
