@@ -4,7 +4,7 @@ public class Params {
     // Learning Params
     public static final float ALPHA = 0.6f;
     public static final float GAMMA = 0.6f;
-    public static final int NUMBER_OF_LEARNS = 1000;
+    public static final int NUMBER_OF_LEARNS = 10000;
     public static final boolean PRINT_TO_FILE = true;
     public static final boolean SHOW_GAMEPLAY_DEBUG = false;
 
@@ -17,8 +17,8 @@ public class Params {
 
     // Size of near and medium boxes for detecting enemy location and obstacles
     public static final int VIEW_NEAR = 1;
-    public static final int VIEW_MED = 2;
-    public static final int VIEW_FAR = 4;
+    public static final int VIEW_MED = 3;
+    public static final int VIEW_FAR = 6;
 
 
     // Reward Params

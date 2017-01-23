@@ -141,25 +141,28 @@ public class WorldState {
                         if(i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ //obstacle above mario
                             if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_above = true;
-                            }
-                            else{
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 obstacle_location_med_above = true;
+                            } else {
+                                obstacle_location_far_below = true;
                             }
                         }
                         else if(i == mario_in_levelScene){
                             if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_level = true;
-                            }
-                            else{
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 obstacle_location_med_level = true;
+                            } else {
+                                obstacle_location_far_level = true;
                             }
                         }
                         else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
                             if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_below = true;
-                            }
-                            else{
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 obstacle_location_med_below = true;
+                            } else {
+                                obstacle_location_far_below = true;
                             }
                         }
                     }
@@ -200,17 +203,17 @@ public class WorldState {
                         }
                     } else if (j < mario_in_levelScene) {
                         if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // obstacle above mario
-                            if (j - mario_in_levelScene <= Params.VIEW_NEAR){
+                            if (mario_in_levelScene - j <= Params.VIEW_NEAR){
                                 coin_left_above = true;
                             }
                         }
                         else if(i == mario_in_levelScene){
-                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
+                            if(mario_in_levelScene - j <= Params.VIEW_NEAR){
                                 coin_left_level = true;
                             }
                         }
                         else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
-                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
+                            if(mario_in_levelScene - j <= Params.VIEW_NEAR){
                                 coin_left_below = true;
                             }
                         }
