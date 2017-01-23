@@ -9,6 +9,16 @@ import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.HashMap;
+
 public class QLearningAgent implements LearningAgent {
 
     private String name;
@@ -30,27 +40,34 @@ public class QLearningAgent implements LearningAgent {
      */
     public static void main(String[] args) {
         // Set up options
-        marioAIOptions = new MarioAIOptions(args);
-        marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
-        LearningAgent agent = new QLearningAgent();
-        marioAIOptions.setAgent(agent);
+        for(float i = 0.1f; i <= 1.0; i+=0.1){
+            for(float j = 0.1f; j <= 1.0; j+=0.1){
+                Params.ALPHA = i;
+                Params.GAMMA = j;
+                System.out.println("LEARN A:" + Params.ALPHA + " G:" + Params.GAMMA);
+                marioAIOptions = new MarioAIOptions(args);
+                marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
+                LearningAgent agent = new QLearningAgent();
+                marioAIOptions.setAgent(agent);
 
-        // Learning task
-        learningTask = new LearningTask(marioAIOptions);
-        marioAIOptions.setVisualization(false);
-        System.out.println("INIT STATE");
-        agent.init();
-        System.out.println("LEARN STATE");
-        agent.learn();
+                // Learning task
+                learningTask = new LearningTask(marioAIOptions);
+                marioAIOptions.setVisualization(false);
+                System.out.println("INIT STATE");
+                agent.init();
+                System.out.println("LEARN STATE");
+                agent.learn();
+            }
+        }
 
         // Gameplay task
-        System.out.println("GAMEPLAY STATE");
+        /*System.out.println("GAMEPLAY STATE");
         show_debug = Params.SHOW_GAMEPLAY_DEBUG;
         marioAIOptions.setVisualization(true);
         marioAIOptions.setScale2X(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);
         basicTask.setOptionsAndReset(marioAIOptions);
-        basicTask.runSingleEpisode(1);
+        basicTask.runSingleEpisode(1);*/
     }
 
     /**
@@ -69,10 +86,11 @@ public class QLearningAgent implements LearningAgent {
     public void learn() {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         int progress_counter = 0;
+        EvaluationInfo eval = null;
         for (int i = 0; i < Params.NUMBER_OF_LEARNS; i++) {
             learningTask.runSingleEpisode(1);
             // Add eval data
-            EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
+            eval = learningTask.getEnvironment().getEvaluationInfo();
             kills += eval.killsTotal;
             if (eval.marioStatus == Mario.STATUS_WIN) {
                 System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
@@ -92,6 +110,15 @@ public class QLearningAgent implements LearningAgent {
         System.out.println("Avg Kills: " + (float) kills / Params.NUMBER_OF_LEARNS + " | Avg Time: " +
                 (float) time / Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float) coins / Params.NUMBER_OF_LEARNS +
                 " | Avg Score: " + (float) score / Params.NUMBER_OF_LEARNS + "\n");
+        String print = "A: " + Params.ALPHA + " G: " + Params.GAMMA + " | Wins: " + wins + " Timeouts: " + timeouts
+                + "| Avg Kills: " + (float) kills / Params.NUMBER_OF_LEARNS + " | Avg Time: " +
+        (float) time / Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float) coins / Params.NUMBER_OF_LEARNS +
+                " | Avg Score: " + (float) score / Params.NUMBER_OF_LEARNS + " | Final Score: " + eval.computeWeightedFitness() + "\n";
+        try {
+            Files.write(Paths.get("results.txt"), print.getBytes(), StandardOpenOption.APPEND);
+        }catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
         if(Params.PRINT_TO_FILE)
             q_table.printToFile();
     }
