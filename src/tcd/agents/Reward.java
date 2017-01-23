@@ -36,7 +36,6 @@ public class Reward {
      */
     public void calculate(Environment environment) {
         current_reward = 0;
-        EvaluationInfo eval = environment.getEvaluationInfo();
 
         // Add positive reward if Mario is going right, negative if going left
         directionalReward(environment.getMarioFloatPos()[0]);
@@ -53,9 +52,8 @@ public class Reward {
         // Add positive reward for killing an enemy
         killReward(environment);
 
-        // Add large negative reward if Mario dies (with time left)
-        if(environment.getMarioStatus() == Mario.STATUS_DEAD
-                && eval.timeLeft > 0){
+        // Add large negative reward if Mario dies
+        if(environment.getMarioStatus() == Mario.STATUS_DEAD){
             updateReward(Params.DEAD);
         }
     }
