@@ -9,10 +9,7 @@ import ch.idsia.benchmark.tasks.LearningTask;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.MarioAIOptions;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
@@ -40,26 +37,18 @@ public class QLearningAgent implements LearningAgent {
      */
     public static void main(String[] args) {
         // Set up options
-        for(float i = 0.1f; i <= 1.0; i+=0.1){
-            for(float j = 0.1f; j <= 1.0; j+=0.1){
-                Params.ALPHA = i;
-                Params.GAMMA = j;
-                System.out.println("LEARN A:" + Params.ALPHA + " G:" + Params.GAMMA);
-                marioAIOptions = new MarioAIOptions(args);
-                marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
-                LearningAgent agent = new QLearningAgent();
-                marioAIOptions.setAgent(agent);
+        marioAIOptions = new MarioAIOptions(args);
+        marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
+        LearningAgent agent = new QLearningAgent();
+        marioAIOptions.setAgent(agent);
 
-                // Learning task
-                learningTask = new LearningTask(marioAIOptions);
-                marioAIOptions.setVisualization(false);
-                System.out.println("INIT STATE");
-                agent.init();
-                System.out.println("LEARN STATE");
-                agent.learn();
-            }
-        }
-
+        // Learning task
+        learningTask = new LearningTask(marioAIOptions);
+        marioAIOptions.setVisualization(false);
+        System.out.println("INIT STATE");
+        agent.init();
+        System.out.println("LEARN STATE");
+        agent.learn();
         // Gameplay task
         /*System.out.println("GAMEPLAY STATE");
         show_debug = Params.SHOW_GAMEPLAY_DEBUG;
@@ -87,22 +76,31 @@ public class QLearningAgent implements LearningAgent {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         int progress_counter = 0;
         EvaluationInfo eval = null;
-        for (int i = 0; i < Params.NUMBER_OF_LEARNS; i++) {
-            learningTask.runSingleEpisode(1);
-            // Add eval data
-            eval = learningTask.getEnvironment().getEvaluationInfo();
-            kills += eval.killsTotal;
-            if (eval.marioStatus == Mario.STATUS_WIN) {
-                System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
-            } else if (eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0) {
-                System.out.println("#" + progress_counter + " Mario Stuck! Timeouts: " + (++timeouts));
+        try(FileWriter fw = new FileWriter("results a" + Params.ALPHA + " g" + Params.GAMMA + ".txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            PrintWriter out = new PrintWriter(bw)) {
+            out.println("I,Kills,Time,Coins,Score");
+            for (int i = 0; i < Params.NUMBER_OF_LEARNS; i++) {
+                learningTask.runSingleEpisode(1);
+                // Add eval data
+                eval = learningTask.getEnvironment().getEvaluationInfo();
+                kills += eval.killsTotal;
+                if (eval.marioStatus == Mario.STATUS_WIN) {
+                    System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
+                } else if (eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0) {
+                    System.out.println("#" + progress_counter + " Mario Stuck! Timeouts: " + (++timeouts));
+                }
+                time += eval.timeSpent;
+                coins += eval.coinsGained;
+                score += eval.computeWeightedFitness();
+                if(i%10 == 0)
+                    out.println(i + "," + eval.killsTotal + "," + eval.timeSpent + "," + eval.coinsGained + "," + eval.computeWeightedFitness());
+                if (progress_counter % (Params.NUMBER_OF_LEARNS / 10) == 0)
+                    System.out.println("Learning: " + (int) ((float) progress_counter / Params.NUMBER_OF_LEARNS * 100) + "%");
+                progress_counter++;
             }
-            time += eval.timeSpent;
-            coins += eval.coinsGained;
-            score += eval.computeWeightedFitness();
-            if (progress_counter % (Params.NUMBER_OF_LEARNS / 10) == 0)
-                System.out.println("Learning: " + (int) ((float) progress_counter / Params.NUMBER_OF_LEARNS * 100) + "%");
-            progress_counter++;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         // Print learning results
         System.out.println("\nLEARNING RESULTS");
@@ -114,11 +112,6 @@ public class QLearningAgent implements LearningAgent {
                 + "| Avg Kills: " + (float) kills / Params.NUMBER_OF_LEARNS + " | Avg Time: " +
         (float) time / Params.NUMBER_OF_LEARNS + "\nAvg Coins: " + (float) coins / Params.NUMBER_OF_LEARNS +
                 " | Avg Score: " + (float) score / Params.NUMBER_OF_LEARNS + " | Final Score: " + eval.computeWeightedFitness() + "\n";
-        try {
-            Files.write(Paths.get("results.txt"), print.getBytes(), StandardOpenOption.APPEND);
-        }catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
         if(Params.PRINT_TO_FILE)
             q_table.printToFile();
     }

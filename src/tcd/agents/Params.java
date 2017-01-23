@@ -2,9 +2,9 @@ package tcd.agents;
 
 public class Params {
     // Learning Params
-    public static float ALPHA = 0.6f;
-    public static float GAMMA = 0.6f;
-    public static final int NUMBER_OF_LEARNS = 1001;
+    public static float ALPHA = 0.9f;
+    public static float GAMMA = 0.1f;
+    public static final int NUMBER_OF_LEARNS = 500;
     public static final boolean PRINT_TO_FILE = true;
     public static final boolean SHOW_GAMEPLAY_DEBUG = false;
 
