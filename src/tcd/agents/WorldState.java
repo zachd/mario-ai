@@ -144,7 +144,7 @@ public class WorldState {
                             } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 obstacle_location_med_above = true;
                             } else {
-                                obstacle_location_far_below = true;
+                                obstacle_location_far_above = true;
                             }
                         }
                         else if(i == mario_in_levelScene){
