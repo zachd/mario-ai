@@ -34,7 +34,6 @@ public class QLearningAgent implements LearningAgent {
         marioAIOptions.setArgs("-ls " + Params.LEVEL_SEED);
         LearningAgent agent = new QLearningAgent();
         marioAIOptions.setAgent(agent);
-        //marioAIOptions.setLevelType(0);
 
         // Learning task
         learningTask = new LearningTask(marioAIOptions);
@@ -48,6 +47,7 @@ public class QLearningAgent implements LearningAgent {
         System.out.println("GAMEPLAY STATE");
         show_debug = Params.SHOW_GAMEPLAY_DEBUG;
         marioAIOptions.setVisualization(true);
+        marioAIOptions.setScale2X(true);
         BasicTask basicTask = new BasicTask(marioAIOptions);
         basicTask.setOptionsAndReset(marioAIOptions);
         basicTask.runSingleEpisode(1);
@@ -63,32 +63,30 @@ public class QLearningAgent implements LearningAgent {
     }
 
     /**
-     * Run by the Learning Track so the agent can learn from 10000 trials
+     * Run by the Learning Track to start 10,000 trials
      */
     @Override
     public void learn() {
         int kills = 0, wins = 0, time = 0, coins = 0, score = 0, timeouts = 0;
         int progress_counter = 0;
-        for (int j = 0; j < Params.NUMBER_OF_MODES; j++) {
-            //marioAIOptions.setMarioMode(j);
-            for (int i = 0; i < Params.NUMBER_OF_LEARNS / Params.NUMBER_OF_MODES; i++) {
-                learningTask.runSingleEpisode(1);
-                // Add eval data
-                EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
-                kills += eval.killsTotal;
-                if (eval.marioStatus == Mario.STATUS_WIN) {
-                    System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
-                } else if (eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0) {
-                    System.out.println("#" + progress_counter + " Mario Stuck! Timeouts: " + (++timeouts));
-                }
-                time += eval.timeSpent;
-                coins += eval.coinsGained;
-                score += eval.computeWeightedFitness();
-                if (progress_counter % (Params.NUMBER_OF_LEARNS / 10) == 0)
-                    System.out.println("Learning: " + (int) ((float) progress_counter / Params.NUMBER_OF_LEARNS * 100) + "%");
-                progress_counter++;
+        for (int i = 0; i < Params.NUMBER_OF_LEARNS; i++) {
+            learningTask.runSingleEpisode(1);
+            // Add eval data
+            EvaluationInfo eval = learningTask.getEnvironment().getEvaluationInfo();
+            kills += eval.killsTotal;
+            if (eval.marioStatus == Mario.STATUS_WIN) {
+                System.out.println("#" + progress_counter + " Mario Won! Wins: " + (++wins));
+            } else if (eval.marioStatus == Mario.STATUS_DEAD && eval.timeLeft == 0) {
+                System.out.println("#" + progress_counter + " Mario Stuck! Timeouts: " + (++timeouts));
             }
+            time += eval.timeSpent;
+            coins += eval.coinsGained;
+            score += eval.computeWeightedFitness();
+            if (progress_counter % (Params.NUMBER_OF_LEARNS / 10) == 0)
+                System.out.println("Learning: " + (int) ((float) progress_counter / Params.NUMBER_OF_LEARNS * 100) + "%");
+            progress_counter++;
         }
+        // Print learning results
         System.out.println("\nLEARNING RESULTS");
         System.out.println("# Level Wins: " + wins + " | # Timeouts: " + timeouts);
         System.out.println("Avg Kills: " + (float) kills / Params.NUMBER_OF_LEARNS + " | Avg Time: " +
@@ -97,6 +95,7 @@ public class QLearningAgent implements LearningAgent {
         if(Params.PRINT_TO_FILE)
             q_table.printToFile();
     }
+
     /**
      * Called every tick while a game is running
      * @param environment Current game environment
@@ -104,11 +103,11 @@ public class QLearningAgent implements LearningAgent {
     @Override
     public void integrateObservation(Environment environment) {
         if (game_started) {
-            // Update the state reward with the environment
+            // Update the reward with the environment
             reward.calculate(environment);
             // Get the worldstate representation of the environment
             WorldState state = new WorldState(environment, reward);
-            // Update the Q table with the current state
+            // Update the Q table with the current state and reward
             q_table.update(state, reward);
         } else if (environment.isMarioOnGround()) {
             game_started = true;
@@ -144,32 +143,26 @@ public class QLearningAgent implements LearningAgent {
 
     @Override
     public void setObservationDetails(int rfWidth, int rfHeight, int egoRow, int egoCol) {
-
     }
 
     @Override
     public void giveReward(float reward) {
-
     }
 
     @Override
     public void setEvaluationQuota(long num) {
-
     }
 
     @Override
     public void reset() {
-
     }
 
     @Override
     public void giveIntermediateReward(float intermediateReward) {
-
     }
 
     @Override
     public void newEpisode() {
-
     }
 
     @Override

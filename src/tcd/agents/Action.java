@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- *
- */
 public class Action {
 
     private int[] NOTHING = {};

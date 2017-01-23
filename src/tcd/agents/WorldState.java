@@ -50,8 +50,8 @@ public class WorldState {
     private byte[][] levelScene;
     private byte[][] enemy_level_scene;
     private int mario_in_levelScene = 9; //the index of the levelScene array that mario is at (19*19 grid so he is at 10,10)
-    private int search_space_start = mario_in_levelScene - Params.ENEMY_FAR;
-    private int search_space_end = mario_in_levelScene + Params.ENEMY_FAR;
+    private int search_space_start = mario_in_levelScene - Params.VIEW_FAR;
+    private int search_space_end = mario_in_levelScene + Params.VIEW_FAR;
 
     public WorldState(Environment env, Reward reward) {
         on_ground = env.isMarioOnGround();
@@ -91,27 +91,27 @@ public class WorldState {
                 if (enemy_level_scene[i][j] != 0) { //if there is an enemy at i,j
                     if (j > mario_in_levelScene) { //if the enemy is in front of mario
                         if (i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE) { //if the enemy is above mario
-                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                            if ((j - mario_in_levelScene) <= Params.VIEW_NEAR) { //if the enemy is near
                                 enemy_location_near_above = true;
-                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 enemy_location_med_above = true;
                             }
                             else{ //enemy must be far distance away if it is not medium or far
                                 enemy_location_far_above = true;
                             }
                         } else if (i == mario_in_levelScene) { //if the enemy is level with mario
-                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                            if ((j - mario_in_levelScene) <= Params.VIEW_NEAR) { //if the enemy is near
                                 enemy_location_near_level = true;
-                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 enemy_location_med_level = true;
                             }
                             else {
                                 enemy_location_far_level = true;
                             }
                         } else if (i == mario_in_levelScene + Params.BELOW_MARIO_SIZE) { //if the enemy is below
-                            if ((j - mario_in_levelScene) <= Params.ENEMY_NEAR) {//if the enemy is near
+                            if ((j - mario_in_levelScene) <= Params.VIEW_NEAR) { //if the enemy is near
                                 enemy_location_near_below = true;
-                            } else if((j-mario_in_levelScene > Params.ENEMY_NEAR) && (j-mario_in_levelScene <=Params.ENEMY_MED)){
+                            } else if((j-mario_in_levelScene > Params.VIEW_NEAR) && (j-mario_in_levelScene <= Params.VIEW_MED)){
                                 enemy_location_med_below = true;
                             }
                             else{
@@ -137,9 +137,9 @@ public class WorldState {
         for (int i = search_space_start; i<= search_space_end; i++) {
             for (int j = mario_in_levelScene + 1; j<= search_space_end; j++) {
                 if((levelScene[i][j] != 0 && levelScene[i][j] != 2 )) { //if the block is not a coin or nothing
-                    if(j > mario_in_levelScene){//the obstacle is infront of mario
-                        if(i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ //obstale above mario
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                    if(j > mario_in_levelScene){ //the obstacle is infront of mario
+                        if(i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ //obstacle above mario
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_above = true;
                             }
                             else{
@@ -147,7 +147,7 @@ public class WorldState {
                             }
                         }
                         else if(i == mario_in_levelScene){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_level = true;
                             }
                             else{
@@ -155,7 +155,7 @@ public class WorldState {
                             }
                         }
                         else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 obstacle_location_near_below = true;
                             }
                             else{
@@ -180,37 +180,37 @@ public class WorldState {
         levelScene = environment.getLevelSceneObservationZ(2);
 
         for (int i = search_space_start; i<= search_space_end; i++) {
-            for (int j = mario_in_levelScene + 1; j<= search_space_end; j++) {
-                if (levelScene[i][j] == 2) { // if the block is not a coin or nothing
-                    if (j > mario_in_levelScene) {// the obstacle is in front of mario
-                        if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // obstacle above mario
-                            if (j - mario_in_levelScene <= Params.ENEMY_NEAR){
+            for (int j = search_space_start; j<= search_space_end; j++) {
+                if (levelScene[i][j] == 2) { // if the block is a coin
+                    if (j > mario_in_levelScene) {// the coin is in front of mario
+                        if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // coin above mario
+                            if (j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_right_above = true;
                             }
                         }
                         else if(i == mario_in_levelScene){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_right_level = true;
                             }
                         }
                         else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_right_below = true;
                             }
                         }
                     } else if (j < mario_in_levelScene) {
                         if( i == mario_in_levelScene - Params.ABOVE_MARIO_SIZE){ // obstacle above mario
-                            if (j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if (j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_left_above = true;
                             }
                         }
                         else if(i == mario_in_levelScene){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_left_level = true;
                             }
                         }
                         else if(i == mario_in_levelScene + Params.BELOW_MARIO_SIZE){
-                            if(j - mario_in_levelScene <= Params.ENEMY_NEAR){
+                            if(j - mario_in_levelScene <= Params.VIEW_NEAR){
                                 coin_left_below = true;
                             }
                         }
@@ -222,7 +222,7 @@ public class WorldState {
     }
 
     /**
-     * Checks whether an input WorldState is equal to the current WorldState object,
+     * Checks whether an input WorldState is equal to the current WorldState object
      * @param input WorldState to check comparison
      * @return boolean whether all attributes are equal
      */
@@ -268,5 +268,3 @@ public class WorldState {
         return response.substring(0, response.length()-2) + "}";
     }
 }
-
-

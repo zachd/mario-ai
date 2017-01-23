@@ -32,7 +32,7 @@ public class Reward {
 
     /**
      * Reward function, given environment, will calculate the reward attainable for this state
-     * @param environment
+     * @param environment current state of environment
      */
     public void calculate(Environment environment) {
         current_reward = 0;
@@ -55,11 +55,6 @@ public class Reward {
         // Add large negative reward if Mario dies
         if(environment.getMarioStatus() == Mario.STATUS_DEAD){
             updateReward(Params.DEAD);
-        }
-
-        // Add large positive reward if Mario has finished
-        if(environment.getMarioStatus() == Mario.STATUS_WIN){
-            updateReward(Params.FINISH);
         }
     }
 
